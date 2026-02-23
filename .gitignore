@@ -6,9 +6,6 @@ __pycache__/
 venv/
 env/
 
-# Archivos Django
-db.sqlite3
-/media/
 
 # Archivos del sistema
 .DS_Store
