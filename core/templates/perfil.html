@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+  .perfil-wrap{
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 40px;
+    box-sizing: border-box;
+  }
+
+  .perfil-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+
+  .perfil-left{
+    display:flex;
+    align-items:center;
+    gap: 22px;
+  }
+
+  .avatar{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    object-fit:cover;
+    background:#eee;
+  }
+
+  /* 🔹 SALUDO MÁS PEQUEÑO */
+  .saludo{
+    font-size: 40px;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.1;
+  }
+
+  .btns{
+    display:flex;
+    gap: 18px;
+    align-items:center;
+  }
+
+  /* 🔹 BOTONES MÁS PEQUEÑOS */
+  .btn{
+    background:#14b8d4;
+    color:white;
+    border:none;
+    cursor:pointer;
+    padding: 14px 28px;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .btn:hover{
+    filter: brightness(0.95);
+  }
+
+  /* TABLA PERFIL */
+  .perfil-table{
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .row{
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 40px;
+    align-items: center;
+    width: 100%;
+    margin: 16px 0;
+  }
+
+  /* 🔹 LABELS MÁS PEQUEÑOS */
+  .label{
+    font-size: 22px;
+    font-weight: 500;
+  }
+
+  /* 🔹 CAJAS MÁS FINAS */
+  .val{
+    width: 100%;
+    box-sizing: border-box;
+
+    background: #f2f2f2;
+    border-radius: 16px;
+    padding: 14px 20px;
+    height: 60px;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    font-size: 16px;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px){
+    .saludo{ font-size: 30px; }
+    .row{ grid-template-columns: 1fr; gap: 10px; }
+    .label{ font-size: 20px; }
+    .val{ justify-content:flex-start; height:auto; }
+  }
+</style>
+
+<div class="perfil-wrap">
+
+  <div class="perfil-header">
+    <div class="perfil-left">
+
+      {% if practicante.foto_perfil %}
+        <img class="avatar" src="{{ practicante.foto_perfil.url }}" alt="Foto perfil">
+      {% else %}
+        <img class="avatar" src="{% static 'images/default-avatar.png' %}" alt="Foto perfil">
+      {% endif %}
+
+      <h1 class="saludo">
+        Hola {{ request.user.first_name }} {{ request.user.last_name }}!
+      </h1>
+
+    </div>
+
+    <div class="btns">
+      <a href="{% url 'perfil_editar' %}">
+        <button class="btn">Editar</button>
+      </a>
+
+      <form method="POST" action="{% url 'logout' %}" style="margin:0;">
+        {% csrf_token %}
+        <button class="btn" type="submit">Cerrar sesión</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="perfil-table">
+
+    <div class="row">
+      <div class="label">Nombre:</div>
+      <div class="val">{{ request.user.first_name|default:"-" }}</div>
+    </div>
+
+    <div class="row">
+      <div class="label">Apellido:</div>
+      <div class="val">{{ request.user.last_name|default:"-" }}</div>
+    </div>
+
+    <div class="row">
+      <div class="label">Rut:</div>
+      <div class="val">{{ practicante.rut|default:"-" }}</div>
+    </div>
+
+    <div class="row">
+      <div class="label">Fecha de nacimiento:</div>
+      <div class="val">
+        {% if practicante.fecha_nacimiento %}
+          {{ practicante.fecha_nacimiento|date:"d-m-Y" }}
+        {% else %}
+          -
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="label">Universidad:</div>
+      <div class="val">{{ practicante.universidad|default:"-" }}</div>
+    </div>
+
+    <div class="row">
+      <div class="label">Carrera:</div>
+      <div class="val">{{ practicante.carrera|default:"-" }}</div>
+    </div>
+
+    <div class="row">
+      <div class="label">Correo:</div>
+      <div class="val">{{ request.user.email|default:"-" }}</div>
+    </div>
+
+    <div class="row">
+      <div class="label">Celular:</div>
+      <div class="val">{{ practicante.celular|default:"-" }}</div>
+    </div>
+
+    <div class="row">
+      <div class="label">Inicio practica:</div>
+      <div class="val">
+        {% if practicante.fecha_inicio_practica %}
+          {{ practicante.fecha_inicio_practica|date:"d-m-Y" }}
+        {% else %}
+          -
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="label">Termino practica:</div>
+      <div class="val">
+        {% if practicante.fecha_termino_practica %}
+          {{ practicante.fecha_termino_practica|date:"d-m-Y" }}
+        {% else %}
+          -
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="label">Horas requeridas:</div>
+      <div class="val">{{ practicante.horas_requeridas|default:"-" }}</div>
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %}

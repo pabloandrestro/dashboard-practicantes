@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+.login-wrap{
+  min-height:80vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.login-card{
+  background:white;
+  border-radius:20px;
+  padding:40px 50px;
+  width:100%;
+  max-width:400px;
+  box-shadow:0 8px 25px rgba(0,0,0,0.1);
+  text-align:center;
+}
+
+.login-logo{
+  width:140px;
+  margin-bottom:25px;
+}
+
+.login-card h2{
+  margin-bottom:20px;
+}
+
+.campo{
+  display:flex;
+  flex-direction:column;
+  text-align:left;
+  margin-bottom:15px;
+}
+
+.campo label{
+  margin-bottom:6px;
+  font-weight:500;
+}
+
+.campo input{
+  padding:12px 14px;
+  border-radius:12px;
+  border:none;
+  background:#f2f2f2;
+  font-size:15px;
+}
+
+.btn-login{
+  margin-top:15px;
+  width:100%;
+  background:#14b8d4;
+  color:white;
+  border:none;
+  padding:12px;
+  border-radius:12px;
+  font-weight:600;
+  font-size:15px;
+  cursor:pointer;
+}
+
+.btn-login:hover{
+  filter:brightness(0.95);
+}
+
+.error{
+  color:red;
+  font-size:14px;
+  margin-bottom:10px;
+}
+</style>
+
+<div class="login-wrap">
+
+  <div class="login-card">
+
+    <!-- LOGO -->
+    <img src="{% static 'images/logo-login.png' %}" class="login-logo">
+
+    <h2>Iniciar sesión</h2>
+
+    <form method="POST">
+      {% csrf_token %}
+
+      {% if form.errors %}
+        <div class="error">
+          Usuario o contraseña incorrectos
+        </div>
+      {% endif %}
+
+      <div class="campo">
+        <label for="id_username">Usuario</label>
+        {{ form.username }}
+      </div>
+
+      <div class="campo">
+        <label for="id_password">Contraseña</label>
+        {{ form.password }}
+      </div>
+
+      <button type="submit" class="btn-login">
+        Ingresar
+      </button>
+
+    </form>
+
+  </div>
+
+</div>
+
+{% endblock %}

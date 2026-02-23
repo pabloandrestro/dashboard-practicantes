@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  .box { max-width: 700px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 14px; }
+  .box h2 { margin-top: 0; }
+  form p { margin: 12px 0; }
+  input, select, textarea {
+    width: 100%; padding: 10px 12px; border-radius: 10px;
+    border: 1px solid #ddd; font-size: 16px;
+  }
+  .actions { display:flex; gap: 12px; margin-top: 18px; }
+  .btn {
+    background:#14b8d4; color:white; border:none; cursor:pointer;
+    padding: 12px 22px; border-radius: 10px; font-weight: 600;
+  }
+  .btn-secondary { background:#e5e7eb; color:#111827; }
+</style>
+
+<div class="box">
+  <h2>Editar perfil</h2>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <div class="actions">
+      <button class="btn" type="submit">Guardar</button>
+      <a href="{% url 'perfil' %}"><button class="btn btn-secondary" type="button">Cancelar</button></a>
+    </div>
+  </form>
+</div>
+{% endblock %}

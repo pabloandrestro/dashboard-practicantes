@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.horas-wrap{
+  max-width:1100px;
+  margin:0 auto;
+  padding:30px;
+}
+
+.acciones-horas{
+  display:flex;
+  align-items:center;
+  margin-top:30px;
+}
+
+.grupo-botones{
+  display:flex;
+  gap:15px;
+  flex-wrap:wrap;
+}
+
+.btn-hora{
+  background:#14b8d4;
+  color:white;
+  border:none;
+  padding:14px 28px;
+  border-radius:14px;
+  font-weight:600;
+  font-size:16px;
+  cursor:pointer;
+  min-width:170px;
+}
+
+.btn-hora:hover{ filter: brightness(0.95); }
+
+.btn-hora:disabled{
+  opacity:0.45;
+  cursor:not-allowed;
+  filter:none;
+}
+
+/* TABLA */
+.tabla-horas{
+  width:100%;
+  margin-top:20px;
+  border-collapse:collapse;
+}
+
+.tabla-horas th{
+  background:#cfd6ff;
+  padding:12px;
+}
+
+.tabla-horas td{
+  text-align:center;
+  padding:12px;
+  border-bottom:2px solid #cfd6ff;
+}
+
+.header-horas{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.hora-actual{
+  font-size:18px;
+  color:#555;
+  font-weight:500;
+}
+</style>
+
+<div class="horas-wrap">
+  <div class="header-horas">
+    <h1>Registrar</h1>
+
+    <div class="hora-actual">
+        Hora Actual <span id="reloj"></span>
+    </div>
+    </div>
+
+  <div class="acciones-horas">
+    <div class="grupo-botones">
+
+      <form method="POST">{% csrf_token %}
+        <button name="accion" value="inicio" class="btn-hora" {% if not can_inicio %}disabled{% endif %}>
+          Inicio
+        </button>
+      </form>
+
+      <form method="POST">{% csrf_token %}
+        <button name="accion" value="inicio_pausa" class="btn-hora" {% if not can_inicio_pausa %}disabled{% endif %}>
+          Inicio pausa
+        </button>
+      </form>
+
+      <form method="POST">{% csrf_token %}
+        <button name="accion" value="fin_pausa" class="btn-hora" {% if not can_fin_pausa %}disabled{% endif %}>
+          Fin pausa
+        </button>
+      </form>
+
+      <form method="POST">{% csrf_token %}
+        <button name="accion" value="termino" class="btn-hora" {% if not can_termino %}disabled{% endif %}>
+          Término
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <h2 style="margin-top:35px;">Historial</h2>
+
+  <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+    <a href="{% url 'descargar_horas_csv' %}" class="btn-hora" style="text-decoration:none;">
+        Descargar Excel
+    </a>
+</div>
+
+  <table class="tabla-horas">
+    <tr>
+      <th>Fecha</th>
+      <th>Inicio</th>
+      <th>Inicio pausa</th>
+      <th>Fin pausa</th>
+      <th>Término</th>
+      <th>Horas</th>
+    </tr>
+
+    {% for h in historial %}
+      <tr>
+        <td>{{ h.fecha|date:"d-m-Y" }}</td>
+        <td>{{ h.hora_entrada|default:"-" }}</td>
+        <td>{{ h.inicio_pausa|default:"-" }}</td>
+        <td>{{ h.fin_pausa|default:"-" }}</td>
+        <td>{{ h.hora_salida|default:"-" }}</td>
+        <td>{% if h.horas_trabajadas %}{{ h.horas_trabajadas }}{% else %}-{% endif %}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6">No hay registros todavía.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+
+<script>
+    function actualizarReloj(){
+    const ahora = new Date()
+
+    let horas = ahora.getHours().toString().padStart(2, '0')
+    let minutos = ahora.getMinutes().toString().padStart(2, '0')
+    let segundos = ahora.getSeconds().toString().padStart(2, '0')
+
+    document.getElementById("reloj").innerText = `${horas}:${minutos}:${segundos}`
+    }
+
+    // actualizar cada segundo
+    setInterval(actualizarReloj, 1000)
+
+    // ejecutar inmediatamente
+    actualizarReloj()
+</script>
+
+{% endblock %}

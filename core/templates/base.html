@@ -1,0 +1,105 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>HubLab</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .navbar {
+            background: linear-gradient(to right, #001940, #00696a);
+            padding: 15px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand img {
+            height: 50px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: white;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 6px;
+        }
+
+        .nav-links a.active {
+            background-color: rgba(255,255,255,0.3);
+        }
+
+        .profile img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .content {
+            padding: 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+
+        <!-- LOGO IZQUIERDA -->
+        <div class="brand">
+            <img src="{% static 'images/logo.png' %}" alt="HubLab">
+        </div>
+
+        <!-- LINKS CENTRO -->
+        {% if request.user.is_authenticated %}
+        <div class="nav-links">
+            <a href="{% url 'inicio' %}" class="{% if request.path == '/' %}active{% endif %}">Inicio</a>
+
+            <a href="{% url 'proyectos' %}" class="{% if request.path == '/proyectos/' %}active{% endif %}">
+                Mis proyectos
+            </a>
+
+            <a href="{% url 'horas' %}" class="{% if request.path == '/horas/' %}active{% endif %}">
+                Registro de horas
+            </a>
+
+            <a href="{% url 'perfil' %}" class="{% if request.path == '/perfil/' %}active{% endif %}">
+                Mi perfil
+            </a>
+        </div>
+{% endif %}
+
+        <!-- FOTO PERFIL DERECHA -->
+        {% if request.user.is_authenticated %}
+        <div class="profile">
+            {% if request.user.practicante.foto_perfil %}
+                <img src="{{ request.user.practicante.foto_perfil.url }}">
+            {% else %}
+                <img src="https://i.pravatar.cc/100">
+            {% endif %}
+        </div>
+        {% endif %}
+
+    </div>
+
+    <div class="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+</body>
+</html>

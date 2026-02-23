@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  .form-wrap{
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 40px;
+    box-sizing: border-box;
+  }
+
+  .form-wrap h1{
+    font-size: 44px;
+    font-weight: 600;
+    margin: 0 0 25px 0;
+  }
+
+  .field{
+    margin: 18px 0;
+  }
+
+  .field label{
+    display:block;
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+
+  .field input,
+  .field select,
+  .field textarea{
+    width: 100%;
+    box-sizing: border-box;
+    background: #f2f2f2;
+    border-radius: 16px;
+    padding: 14px 20px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+  }
+
+  .field textarea{
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .actions{
+    margin-top: 28px;
+    display:flex;
+    justify-content:flex-end;
+  }
+
+  .btn{
+    background:#14b8d4;
+    color:white;
+    border:none;
+    cursor:pointer;
+    padding: 14px 28px;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  .btn:hover{ filter: brightness(0.95); }
+</style>
+
+<div class="form-wrap">
+  <h1>Crear proyecto</h1>
+
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="field">
+      {{ form.nombre.label_tag }}
+      {{ form.nombre }}
+    </div>
+
+    <div class="field">
+      {{ form.descripcion.label_tag }}
+      {{ form.descripcion }}
+    </div>
+
+    <div class="field">
+      {{ form.numero_celula.label_tag }}
+      {{ form.numero_celula }}
+    </div>
+
+    <div class="field">
+      {{ form.estado.label_tag }}
+      {{ form.estado }}
+    </div>
+
+    <div class="field">
+      {{ form.fecha_inicio.label_tag }}
+      {{ form.fecha_inicio }}
+    </div>
+
+    <div class="field">
+      {{ form.fecha_termino.label_tag }}
+      {{ form.fecha_termino }}
+    </div>
+
+    <div class="field">
+      {{ form.porcentaje_avance.label_tag }}
+      {{ form.porcentaje_avance }}
+    </div>
+
+    <div class="field">
+      {{ form.imagen.label_tag }}
+      {{ form.imagen }}
+    </div>
+
+    <div class="actions">
+      <button type="submit" class="btn">Guardar proyecto</button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

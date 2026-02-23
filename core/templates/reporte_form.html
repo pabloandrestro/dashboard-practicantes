@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+  .form-wrap{
+    max-width:900px;
+    margin:0 auto;
+    padding:30px 40px;
+  }
+
+  h2{
+    margin-bottom:25px;
+  }
+
+  .form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+  }
+
+  .campo{
+    display:flex;
+    flex-direction:column;
+  }
+
+  .campo label{
+    font-size:18px;
+    margin-bottom:6px;
+    font-weight:500;
+  }
+
+  .campo input,
+  .campo textarea{
+    width:100%;
+    box-sizing:border-box;
+
+    background:#f2f2f2;
+    border-radius:12px;
+    border:none;
+    padding:12px 16px;
+
+    font-size:15px;
+  }
+
+  .campo textarea{
+    resize:vertical;
+    min-height:100px;
+  }
+
+  .campo-full{
+    grid-column:1 / -1;
+  }
+
+  .btn-guardar{
+    margin-top:25px;
+    background:#14b8d4;
+    color:white;
+    padding:12px 25px;
+    border-radius:12px;
+    border:none;
+    font-weight:600;
+    font-size:15px;
+    cursor:pointer;
+  }
+
+  .btn-guardar:hover{
+    filter:brightness(0.95);
+  }
+</style>
+
+<div class="form-wrap">
+
+  <h2>Nuevo reporte de avance</h2>
+
+  <form method="POST">
+    {% csrf_token %}
+
+    <div class="form-grid">
+
+      <!-- FECHA -->
+      <div class="campo">
+        {{ form.fecha.label_tag }}
+        {{ form.fecha }}
+      </div>
+
+      <!-- PORCENTAJE -->
+      <div class="campo">
+        {{ form.porcentaje_avance.label_tag }}
+        {{ form.porcentaje_avance }}
+      </div>
+
+      <!-- DESCRIPCION -->
+      <div class="campo campo-full">
+        {{ form.descripcion.label_tag }}
+        {{ form.descripcion }}
+      </div>
+
+      <!-- 🔥 NUEVO ESTADO DEL PROYECTO -->
+      <div class="campo campo-full">
+        {{ form.estado.label_tag }}
+        {{ form.estado }}
+      </div>
+
+    </div>
+
+    <button type="submit" class="btn-guardar">
+      Guardar reporte
+    </button>
+
+  </form>
+
+</div>
+
+{% endblock %}

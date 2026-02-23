@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+  .page-wrap{
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 10px 40px 40px;
+    box-sizing: border-box;
+  }
+
+  .top-actions{
+    display:flex;
+    justify-content:flex-end;
+    margin: 10px 0 18px;
+  }
+
+  .btn-primary{
+    background:#14b8d4;
+    color:#fff;
+    border:none;
+    padding: 16px 34px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor:pointer;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-primary:hover{ 
+    text-decoration: none;
+    filter: brightness(0.95); }
+
+  .card-link{
+    text-decoration:none;
+    color: inherit;
+    display:block;
+  }
+
+  .card{
+    border: 2px solid #2c2c2c;
+    border-radius: 18px;
+    padding: 18px 22px;
+    display:grid;
+    grid-template-columns: 170px 1fr 220px;
+    gap: 22px;
+    align-items:center;
+    margin: 22px 0;
+    transition: transform 0.05s ease-in-out, box-shadow 0.05s ease-in-out;
+  }
+
+  .card:hover{
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  }
+
+  .thumb{
+    width: 160px;
+    height: 120px;
+    border-radius: 18px;
+    object-fit: cover;
+    background:#eee;
+  }
+
+  .info{
+    display:flex;
+    flex-direction:column;
+    gap: 6px;
+  }
+
+  .title{
+    font-size: 26px;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .meta{
+    font-size: 18px;
+    margin: 0;
+  }
+
+  .badge-wrap{
+    display:flex;
+    justify-content:flex-end;
+    align-items:flex-start;
+  }
+
+  .badge{
+    padding: 12px 26px;
+    border-radius: 999px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+    min-width: 160px;
+    text-align:center;
+  }
+
+  .badge.activo{ background:#7bd84f; }
+  .badge.pausado{ background:#ffd84d; color:#ffffff; }
+  .badge.terminado{ background:#1f56ff; }
+
+  .empty{
+    margin-top: 30px;
+    font-size: 18px;
+    opacity: 0.7;
+  }
+
+  @media (max-width: 1100px){
+    .card{
+      grid-template-columns: 140px 1fr;
+      grid-template-rows: auto auto;
+    }
+    .badge-wrap{ justify-content:flex-start; grid-column: 2 / 3; }
+  }
+
+  @media (max-width: 750px){
+    .page-wrap{ padding: 10px 18px 30px; }
+    .card{ grid-template-columns: 1fr; }
+    .thumb{ width: 100%; height: 180px; }
+    .badge-wrap{ justify-content:flex-start; }
+  }
+</style>
+
+<div class="page-wrap">
+
+  <div class="top-actions">
+    {% if ver_todos %}
+      <a href="{% url 'proyectos' %}">
+        <a href="{% url 'proyectos' %}" class="btn-primary">Ver mis proyectos</a>
+      </a>
+    {% else %}
+      <div style="display:flex; gap:15px; justify-content:flex-end; margin-bottom:20px;">
+        <a href="{% url 'proyecto_crear' %}" class="btn-primary">Crear proyecto</a>
+        <a href="{% url 'proyectos' %}?all=1" class="btn-primary">Ver todos los proyectos</a>
+      </div>
+    {% endif %}
+  </div>
+
+  {% if not ver_todos %}
+    {% if participaciones and participaciones|length > 0 %}
+      {% for part in participaciones %}
+        {% with p=part.proyecto %}
+          <a class="card-link" href="{% url 'proyecto_detalle' p.id %}">
+            <div class="card">
+              <div>
+                {% if p.imagen %}
+                  <img class="thumb" src="{{ p.imagen.url }}" alt="Imagen proyecto">
+                {% else %}
+                  <img class="thumb" src="{% static 'images/proyectos/default.png' %}" alt="Imagen proyecto">
+                {% endif %}
+              </div>
+
+              <div class="info">
+                <h2 class="title">{{ p.nombre }}</h2>
+                <p class="meta">Inicio: {{ p.fecha_inicio|date:"d-m-Y" }}</p>
+                <p class="meta">Rol: {{ part.rol_en_proyecto }}</p>
+                <p class="meta">Avance: {{ p.porcentaje_avance }}%</p>
+              </div>
+
+              <div class="badge-wrap">
+                {% if p.estado|lower == "activo" %}
+                  <div class="badge activo">Activo</div>
+                {% elif p.estado|lower == "pausado" %}
+                  <div class="badge pausado">Pausado</div>
+                {% else %}
+                  <div class="badge terminado">Terminado</div>
+                {% endif %}
+              </div>
+            </div>
+          </a>
+        {% endwith %}
+      {% endfor %}
+    {% else %}
+      <div class="empty">Aún no estás asignada a ningún proyecto.</div>
+    {% endif %}
+  {% endif %}
+
+  {% if ver_todos %}
+    {% if proyectos and proyectos|length > 0 %}
+      {% for p in proyectos %}
+        <a class="card-link" href="{% url 'proyecto_detalle' p.id %}">
+          <div class="card">
+            <div>
+              {% if p.imagen %}
+                <img class="thumb" src="{{ p.imagen.url }}" alt="Imagen proyecto">
+              {% else %}
+                <img class="thumb" src="{% static 'images/proyectos/default.png' %}" alt="Imagen proyecto">
+              {% endif %}
+            </div>
+
+            <div class="info">
+              <h2 class="title">{{ p.nombre }}</h2>
+              <p class="meta">Inicio: {{ p.fecha_inicio|date:"d-m-Y" }}</p>
+              <p class="meta">Avance: {{ p.porcentaje_avance }}%</p>
+            </div>
+
+            <div class="badge-wrap">
+              {% if p.estado|lower == "activo" %}
+                <div class="badge activo">Activo</div>
+              {% elif p.estado|lower == "pausado" %}
+                <div class="badge pausado">Pausado</div>
+              {% else %}
+                <div class="badge terminado">Terminado</div>
+              {% endif %}
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+    {% else %}
+      <div class="empty">No hay proyectos registrados todavía.</div>
+    {% endif %}
+  {% endif %}
+
+</div>
+{% endblock %}

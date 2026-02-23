@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+  .inicio-wrap{
+    max-width:1100px;
+    margin:0 auto;
+    padding:30px 20px;
+    box-sizing:border-box;
+  }
+
+  /* CONTENEDOR GENERAL */
+  .top-section{
+    display:flex;
+    align-items:flex-start;
+    gap:40px;
+    justify-content:center;
+  }
+
+  /* BLOQUE DERECHO (todo alineado) */
+  .right-block{
+    max-width:750px;
+    width:100%;
+  }
+
+  /* TITULO */
+  .bienvenida{
+    font-size:32px;
+    font-weight:500;
+    margin-bottom:20px;
+    text-align:left;
+  }
+
+  /* FOTO */
+  .avatar{
+    width:180px;
+    height:180px;
+    border-radius:50%;
+    object-fit:cover;
+    margin-top:10px;
+  }
+
+  /* TARJETA PERFIL */
+  .perfil-card{
+    border:2px solid #000;
+    border-radius:25px;
+    padding:20px 25px;
+    font-size:16px;
+    line-height:1.4;
+    width:100%;
+    box-sizing:border-box;
+  }
+
+  .perfil-nombre{
+    font-size:20px;
+    font-weight:600;
+    margin-bottom:10px;
+  }
+
+  /* STATS */
+  .stats{
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+    margin-top:25px;
+    width:100%;
+  }
+
+  .stat-box{
+    border:2px solid #000;
+    border-radius:20px;
+    padding:15px 20px;
+    text-align:center;
+    flex:1;
+  }
+
+  .stat-title{
+    font-size:16px;
+    margin-bottom:8px;
+  }
+
+  .stat-num{
+    font-size:24px;
+    font-weight:700;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width:900px){
+    .top-section{
+      flex-direction:column;
+      align-items:center;
+    }
+
+    .avatar{
+      width:150px;
+      height:150px;
+    }
+
+    .stats{
+      flex-direction:column;
+      align-items:center;
+    }
+
+    .stat-box{
+      width:100%;
+    }
+  }
+</style>
+
+<div class="inicio-wrap">
+
+  <div class="top-section">
+
+    <!-- FOTO -->
+    {% if practicante.foto_perfil %}
+      <img src="{{ practicante.foto_perfil.url }}" class="avatar" alt="Foto perfil">
+    {% else %}
+      <img src="{% static 'images/default-avatar.png' %}" class="avatar" alt="Foto perfil">
+    {% endif %}
+
+    <!-- BLOQUE DERECHO -->
+    <div class="right-block">
+
+      <!-- BIENVENIDA -->
+      <h1 class="bienvenida">
+        Bienvenido/a, {{ request.user.first_name }}!
+      </h1>
+
+      <!-- CARD INFO -->
+      <div class="perfil-card">
+
+        <div class="perfil-nombre">
+          {{ request.user.first_name }} {{ request.user.last_name }}
+        </div>
+
+        <div>{{ practicante.carrera }}</div>
+        <div>{{ practicante.universidad }}</div>
+
+        <div style="margin-top:10px;">
+          Inicio: {{ practicante.fecha_inicio_practica|date:"d-m-Y" }}
+        </div>
+
+        <div>
+          Termino: {{ practicante.fecha_termino_practica|date:"d-m-Y" }}
+        </div>
+
+      </div>
+
+      <!-- STATS -->
+      <div class="stats">
+
+        <div class="stat-box">
+          <div class="stat-title">Horas Trabajadas</div>
+          <div class="stat-num">{{ horas_totales }}</div>
+        </div>
+
+        <div class="stat-box">
+          <div class="stat-title">Dias Activos</div>
+          <div class="stat-num">{{ dias_activos }}</div>
+        </div>
+
+        <div class="stat-box">
+          <div class="stat-title">Proyectos Activos</div>
+          <div class="stat-num">{{ proyectos_activos }}</div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %}
