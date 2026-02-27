@@ -3,6 +3,7 @@
 
 {% block content %}
 <style>
+  /* Contenedor principal de la vista de proyectos */
   .page-wrap{
     width: 100%;
     max-width: 1400px;
@@ -11,12 +12,14 @@
     box-sizing: border-box;
   }
 
+  /* Barra superior de acciones (crear, ver todos, etc.) */
   .top-actions{
     display:flex;
     justify-content:flex-end;
     margin: 10px 0 18px;
   }
 
+  /* Botón principal reutilizable */
   .btn-primary{
     background:#14b8d4;
     color:#fff;
@@ -29,16 +32,20 @@
     text-decoration: none;
     display: inline-block;
   }
+
   .btn-primary:hover{ 
     text-decoration: none;
-    filter: brightness(0.95); }
+    filter: brightness(0.95);
+  }
 
+  /* Enlace envolvente de la tarjeta completa */
   .card-link{
     text-decoration:none;
     color: inherit;
     display:block;
   }
 
+  /* Tarjeta de proyecto */
   .card{
     border: 2px solid #2c2c2c;
     border-radius: 18px;
@@ -51,11 +58,13 @@
     transition: transform 0.05s ease-in-out, box-shadow 0.05s ease-in-out;
   }
 
+  /* Efecto hover de la tarjeta */
   .card:hover{
     transform: translateY(-1px);
     box-shadow: 0 6px 18px rgba(0,0,0,0.08);
   }
 
+  /* Imagen del proyecto */
   .thumb{
     width: 160px;
     height: 120px;
@@ -64,29 +73,34 @@
     background:#eee;
   }
 
+  /* Contenedor de la información del proyecto */
   .info{
     display:flex;
     flex-direction:column;
     gap: 6px;
   }
 
+  /* Nombre del proyecto */
   .title{
     font-size: 26px;
     font-weight: 500;
     margin: 0;
   }
 
+  /* Texto de metadata (inicio, rol, avance, etc.) */
   .meta{
     font-size: 18px;
     margin: 0;
   }
 
+  /* Contenedor del estado del proyecto */
   .badge-wrap{
     display:flex;
     justify-content:flex-end;
     align-items:flex-start;
   }
 
+  /* Badge de estado */
   .badge{
     padding: 12px 26px;
     border-radius: 999px;
@@ -97,15 +111,19 @@
     text-align:center;
   }
 
+  /* Colores según estado */
   .badge.activo{ background:#7bd84f; }
   .badge.pausado{ background:#ffd84d; color:#ffffff; }
   .badge.terminado{ background:#1f56ff; }
 
+  /* Mensaje cuando no hay proyectos */
   .empty{
     margin-top: 30px;
     font-size: 18px;
     opacity: 0.7;
   }
+
+  /* ================= RESPONSIVE ================= */
 
   @media (max-width: 1100px){
     .card{
@@ -125,11 +143,16 @@
 
 <div class="page-wrap">
 
+  <!-- ================= ACCIONES SUPERIORES ================= -->
   <div class="top-actions">
+
+    <!-- Si estoy viendo TODOS los proyectos -->
     {% if ver_todos %}
       <a href="{% url 'proyectos' %}">
         <a href="{% url 'proyectos' %}" class="btn-primary">Ver mis proyectos</a>
       </a>
+
+    <!-- Si estoy viendo MIS proyectos -->
     {% else %}
       <div style="display:flex; gap:15px; justify-content:flex-end; margin-bottom:20px;">
         <a href="{% url 'proyecto_crear' %}" class="btn-primary">Crear proyecto</a>
@@ -138,12 +161,19 @@
     {% endif %}
   </div>
 
+  <!-- ================= MIS PROYECTOS ================= -->
   {% if not ver_todos %}
+
     {% if participaciones and participaciones|length > 0 %}
+
       {% for part in participaciones %}
         {% with p=part.proyecto %}
+
+          <!-- Tarjeta clickeable hacia detalle del proyecto -->
           <a class="card-link" href="{% url 'proyecto_detalle' p.id %}">
             <div class="card">
+
+              <!-- Imagen del proyecto -->
               <div>
                 {% if p.imagen %}
                   <img class="thumb" src="{{ p.imagen.url }}" alt="Imagen proyecto">
@@ -152,6 +182,7 @@
                 {% endif %}
               </div>
 
+              <!-- Información del proyecto -->
               <div class="info">
                 <h2 class="title">{{ p.nombre }}</h2>
                 <p class="meta">Inicio: {{ p.fecha_inicio|date:"d-m-Y" }}</p>
@@ -159,6 +190,7 @@
                 <p class="meta">Avance: {{ p.porcentaje_avance }}%</p>
               </div>
 
+              <!-- Estado del proyecto -->
               <div class="badge-wrap">
                 {% if p.estado|lower == "activo" %}
                   <div class="badge activo">Activo</div>
@@ -168,20 +200,30 @@
                   <div class="badge terminado">Terminado</div>
                 {% endif %}
               </div>
+
             </div>
           </a>
+
         {% endwith %}
       {% endfor %}
+
     {% else %}
+      <!-- Caso sin proyectos asignados -->
       <div class="empty">Aún no estás asignada a ningún proyecto.</div>
     {% endif %}
   {% endif %}
 
+  <!-- ================= TODOS LOS PROYECTOS ================= -->
   {% if ver_todos %}
+
     {% if proyectos and proyectos|length > 0 %}
+
       {% for p in proyectos %}
+
         <a class="card-link" href="{% url 'proyecto_detalle' p.id %}">
           <div class="card">
+
+            <!-- Imagen del proyecto -->
             <div>
               {% if p.imagen %}
                 <img class="thumb" src="{{ p.imagen.url }}" alt="Imagen proyecto">
@@ -190,12 +232,14 @@
               {% endif %}
             </div>
 
+            <!-- Info proyecto -->
             <div class="info">
               <h2 class="title">{{ p.nombre }}</h2>
               <p class="meta">Inicio: {{ p.fecha_inicio|date:"d-m-Y" }}</p>
               <p class="meta">Avance: {{ p.porcentaje_avance }}%</p>
             </div>
 
+            <!-- Estado -->
             <div class="badge-wrap">
               {% if p.estado|lower == "activo" %}
                 <div class="badge activo">Activo</div>
@@ -205,10 +249,14 @@
                 <div class="badge terminado">Terminado</div>
               {% endif %}
             </div>
+
           </div>
         </a>
+
       {% endfor %}
+
     {% else %}
+      <!-- Caso sin proyectos en el sistema -->
       <div class="empty">No hay proyectos registrados todavía.</div>
     {% endif %}
   {% endif %}

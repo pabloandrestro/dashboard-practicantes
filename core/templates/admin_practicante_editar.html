@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+  /* Contenedor principal:
+     - Defino un ancho máximo para que el formulario no quede demasiado ancho.
+     - Centro el contenido y agrego padding. */
+  .wrap{
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 30px 40px;
+    box-sizing: border-box;
+  }
+
+  /* Título de la página. */
+  .title{
+    font-size: 36px;
+    margin: 0 0 20px 0;
+    font-weight: 700;
+  }
+
+  /* Tarjeta del formulario:
+     - Borde negro, esquinas redondeadas, fondo blanco y padding interno. */
+  .card{
+    border: 2px solid #111;
+    border-radius: 18px;
+    padding: 22px 24px;
+    background: #fff;
+  }
+
+  /* Grid del formulario:
+     - 2 columnas para organizar los campos en desktop.
+     - gap para separación entre inputs. */
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 10px;
+  }
+
+  /* Labels dentro de cada campo. */
+  .field label{
+    display:block;
+    font-weight:600;
+    margin-bottom:8px;
+    font-size: 15px;
+  }
+
+  /* Inputs y selects:
+     - Ancho completo, padding, esquinas redondeadas.
+     - Fondo gris suave y sin borde visible. */
+  .field input, .field select{
+    width:100%;
+    box-sizing:border-box;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: none;
+    background:#f2f2f2;
+    font-size: 15px;
+    outline: none;
+  }
+
+  /* Clase para que un elemento ocupe ambas columnas. */
+  .row-full{
+    grid-column: 1 / -1;
+  }
+
+  /* Acciones (botones):
+     - Alineo a la derecha.
+     - gap para separación y flex-wrap para responsive. */
+  .actions{
+    margin-top: 22px;
+    display:flex;
+    justify-content:flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* Botón principal. */
+  .btn{
+    background:#14b8d4;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:12px;
+    font-weight:700;
+    cursor:pointer;
+    text-decoration:none;
+    display:inline-block;
+  }
+  .btn:hover{ filter:brightness(0.95); }
+
+  /* Botón secundario. */
+  .btn-sec{
+    background:#e5e7eb;
+    color:#111;
+  }
+  .btn-sec:hover{ filter:brightness(0.97); }
+
+  /* Botón de acción crítica (no se usa en este template, pero queda definido). */
+  .btn-danger{
+    background:#ef4444;
+    color:white;
+  }
+  .btn-danger:hover{ filter:brightness(0.9); }
+
+  /* Texto de ayuda bajo campos. */
+  .hint{
+    font-size: 13px;
+    color:#555;
+    margin-top: 6px;
+  }
+
+  /* Contenedor tipo “toggle” para checkboxes:
+     - fondo gris, padding y alineación horizontal. */
+  .toggle{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background:#f2f2f2;
+  }
+  .toggle input{
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Responsive:
+     - Paso el grid a una columna.
+     - row-full deja de ser necesario cuando solo hay una columna. */
+  @media (max-width: 850px){
+    .grid{ grid-template-columns: 1fr; }
+    .row-full{ grid-column:auto; }
+  }
+</style>
+
+<div class="wrap">
+  <div class="title">Editar practicante</div>
+
+  <div class="card">
+    <!-- Formulario:
+         - POST para actualizar datos.
+         - multipart/form-data para permitir subida de foto_perfil. -->
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="grid">
+
+        <!-- =========================
+             SECCIÓN: USER (Django User)
+             ========================= -->
+
+        <div class="field">
+          <label>Usuario</label>
+          <!-- Username del usuario asociado al practicante -->
+          <input type="text" name="username" value="{{ usuario.username }}" required>
+        </div>
+
+        <div class="field">
+          <label>Correo</label>
+          <!-- Email del usuario (puede venir vacío) -->
+          <input type="email" name="email" value="{{ usuario.email|default:'' }}">
+        </div>
+
+        <div class="field">
+          <label>Nombre</label>
+          <!-- Nombre del usuario -->
+          <input type="text" name="first_name" value="{{ usuario.first_name|default:'' }}" required>
+        </div>
+
+        <div class="field">
+          <label>Apellido</label>
+          <!-- Apellido del usuario -->
+          <input type="text" name="last_name" value="{{ usuario.last_name|default:'' }}" required>
+        </div>
+
+        <div class="field row-full">
+          <label>Contraseña (opcional)</label>
+          <!-- Si se completa, la vista reemplaza la contraseña anterior -->
+          <input type="password" name="password" placeholder="Dejar vacío para no cambiar">
+          <div class="hint">Si escribes una contraseña nueva, se reemplazará la anterior.</div>
+        </div>
+
+        <!-- Separador visual entre secciones -->
+        <hr class="row-full" style="border:none;border-top:1px solid #ddd;margin:10px 0;">
+
+        <!-- =========================
+             SECCIÓN: PRACTICANTE (modelo Practicante)
+             ========================= -->
+
+        <div class="field">
+          <label>RUT</label>
+          <!-- RUT del practicante (si existe) -->
+          <input type="text" name="rut" value="{{ practicante.rut|default:'' }}">
+        </div>
+
+        <div class="field">
+          <label>Celular</label>
+          <!-- Celular del practicante -->
+          <input type="text" name="celular" value="{{ practicante.celular|default:'' }}">
+        </div>
+
+        <div class="field">
+          <label>Universidad</label>
+          <!-- Universidad del practicante -->
+          <input type="text" name="universidad" value="{{ practicante.universidad|default:'' }}">
+        </div>
+
+        <div class="field">
+          <label>Carrera</label>
+          <!-- Carrera del practicante -->
+          <input type="text" name="carrera" value="{{ practicante.carrera|default:'' }}">
+        </div>
+
+        <div class="field">
+          <label>Fecha nacimiento</label>
+          <!-- Date input con formato YYYY-MM-DD -->
+          <input type="date" name="fecha_nacimiento"
+                 value="{% if practicante.fecha_nacimiento %}{{ practicante.fecha_nacimiento|date:'Y-m-d' }}{% endif %}">
+        </div>
+
+        <div class="field">
+          <label>Horas requeridas</label>
+          <!-- Horas requeridas para completar la práctica -->
+          <input type="number" name="horas_requeridas" value="{{ practicante.horas_requeridas|default:'' }}">
+        </div>
+
+        <div class="field">
+          <label>Inicio práctica</label>
+          <!-- Fecha de inicio de práctica -->
+          <input type="date" name="fecha_inicio_practica"
+                 value="{% if practicante.fecha_inicio_practica %}{{ practicante.fecha_inicio_practica|date:'Y-m-d' }}{% endif %}">
+        </div>
+
+        <div class="field">
+          <label>Término práctica</label>
+          <!-- Fecha de término de práctica -->
+          <input type="date" name="fecha_termino_practica"
+                 value="{% if practicante.fecha_termino_practica %}{{ practicante.fecha_termino_practica|date:'Y-m-d' }}{% endif %}">
+        </div>
+
+        <div class="field row-full">
+          <label>Foto de perfil (opcional)</label>
+          <!-- Subida de imagen de perfil -->
+          <input type="file" name="foto_perfil" accept="image/*">
+
+          <div class="hint">
+            Actual:
+            {% if practicante.foto_perfil %}
+              <a href="{{ practicante.foto_perfil.url }}" target="_blank">ver imagen</a>
+            {% else %}
+              sin foto
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="field row-full">
+          <label>Estado del practicante</label>
+          <!-- Checkbox para activar/desactivar al practicante -->
+          <div class="toggle">
+            <input type="checkbox" name="activo" {% if practicante.activo %}checked{% endif %}>
+            <div>
+              <b>Activo</b>
+              <div class="hint">Si lo desmarcas, el practicante quedará desactivado.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field row-full">
+          <label>Rol controller</label>
+          <!-- Checkbox que marca si el practicante es controller -->
+          <div class="toggle">
+            <input type="checkbox" name="es_controller" {% if practicante.es_controller %}checked{% endif %}>
+            <div>
+              <b>Es controller</b>
+              <div class="hint">Marca esto si quieres darle permiso a administrar a otros practicantes.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="actions">
+        <!-- Botón para volver a la lista de practicantes -->
+        <a class="btn btn-sec" href="{% url 'admin_practicantes' %}">Volver</a>
+
+        <!-- Botón para enviar el formulario -->
+        <button class="btn" type="submit">Guardar cambios</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

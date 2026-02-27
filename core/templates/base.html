@@ -2,104 +2,231 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>HubLab</title>
+  <meta charset="UTF-8">
+  <title>HubLab</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Fuente principal del sistema -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Space Grotesk', sans-serif;
-        }
+  <style>
+    /* Reset básico del body */
+    body{
+      margin:0;
+      font-family:'Space Grotesk', sans-serif;
+    }
 
-        .navbar {
-            background: linear-gradient(to right, #001940, #00696a);
-            padding: 15px 40px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
+    /* Barra superior del sistema */
+    .navbar{
+      background: linear-gradient(to right, #001940, #00696a);
+      padding: 15px 40px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+    }
 
-        .brand img {
-            height: 50px;
-        }
+    /* Contenedor del logo */
+    .brand{
+      width:160px;
+      display:flex;
+      align-items:center;
+    }
 
-        .nav-links {
-            display: flex;
-            gap: 40px;
-        }
+    /* Imagen del logo */
+    .brand img{
+      height:50px;
+    }
 
-        .nav-links a {
-            text-decoration: none;
-            color: white;
-            font-weight: 500;
-            padding: 8px 15px;
-            border-radius: 6px;
-        }
+    /* Zona central de navegación */
+    .nav-center{
+      flex:1;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    }
 
-        .nav-links a.active {
-            background-color: rgba(255,255,255,0.3);
-        }
+    /* Contenedor de links del menú */
+    .nav-links{
+      display:flex;
+      gap:40px;
+      align-items:center;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
 
-        .profile img {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
+    /* Estilo base de los links */
+    .nav-links a{
+      text-decoration:none;
+      color:white;
+      font-weight:500;
+      padding:8px 15px;
+      border-radius:6px;
+      white-space:nowrap;
+    }
 
-        .content {
-            padding: 40px;
-        }
-    </style>
+    /* Link activo */
+    .nav-links a.active{
+      background-color: rgba(255,255,255,0.3);
+    }
+
+    /* Botón cambio de modo (admin / practicante) */
+    .nav-switch{
+      background-color: transparent;
+      font-weight:600;
+    }
+
+    /* Contenedor de foto de perfil */
+    .profile{
+      width:80px;
+      display:flex;
+      justify-content:flex-end;
+      align-items:center;
+    }
+
+    /* Imagen de perfil */
+    .profile img{
+      width:45px;
+      height:45px;
+      border-radius:50%;
+      object-fit:cover;
+    }
+
+    /* Contenido principal de cada vista */
+    .content{
+      padding:40px;
+    }
+  </style>
 </head>
 
 <body>
 
-    <div class="navbar">
+  <div class="navbar">
 
-        <!-- LOGO IZQUIERDA -->
-        <div class="brand">
-            <img src="{% static 'images/logo.png' %}" alt="HubLab">
-        </div>
+    <!-- ================= LOGO ================= -->
+    <div class="brand">
+      <img src="{% static 'images/logo.png' %}" alt="HubLab">
+    </div>
 
-        <!-- LINKS CENTRO -->
-        {% if request.user.is_authenticated %}
-        <div class="nav-links">
-            <a href="{% url 'inicio' %}" class="{% if request.path == '/' %}active{% endif %}">Inicio</a>
+    <!-- Solo muestro navegación si el usuario está autenticado -->
+    {% if request.user.is_authenticated %}
+    <div class="nav-center">
+      <div class="nav-links">
 
-            <a href="{% url 'proyectos' %}" class="{% if request.path == '/proyectos/' %}active{% endif %}">
-                Mis proyectos
+        <!-- ================= ADMIN SUPERUSER ================= -->
+        {% if request.user.is_superuser %}
+
+          <!-- Menú practicantes -->
+          <a href="{% url 'admin_practicantes' %}"
+             class="{% if request.resolver_match.url_name == 'admin_practicantes' or request.resolver_match.url_name == 'admin_practicante_crear' or request.resolver_match.url_name == 'admin_practicante_editar' or request.resolver_match.url_name == 'admin_practicante_perfil' %}active{% endif %}">
+            Practicantes
+          </a>
+
+          <!-- Menú proyectos -->
+          <a href="{% url 'admin_proyectos' %}"
+             class="{% if request.resolver_match.url_name == 'admin_proyectos' or request.resolver_match.url_name == 'admin_proyecto_detalle' %}active{% endif %}">
+            Proyectos
+          </a>
+
+          <!-- Menú horas -->
+          <a href="{% url 'admin_horas' %}"
+             class="{% if request.resolver_match.url_name == 'admin_horas' %}active{% endif %}">
+            Horas
+          </a>
+
+          <!-- Menú reportes -->
+          <a href="{% url 'admin_reportes' %}"
+             class="{% if request.resolver_match.url_name == 'admin_reportes' %}active{% endif %}">
+            Reporte
+          </a>
+
+          <!-- Perfil admin -->
+          <a href="{% url 'admin_perfil' %}"
+             class="{% if request.resolver_match.url_name == 'admin_perfil' or request.resolver_match.url_name == 'admin_perfil_editar' %}active{% endif %}">
+            Mi Perfil
+          </a>
+
+        <!-- ================= CONTROLLER EN MODO ADMIN ================= -->
+        {% elif request.user.is_staff and es_admin_path %}
+
+          <!-- Botón para volver a vista practicante -->
+          <a href="/" class="nav-switch">Ir a practicante</a>
+
+          <a href="{% url 'admin_practicantes' %}"
+             class="{% if request.resolver_match.url_name == 'admin_practicantes' or request.resolver_match.url_name == 'admin_practicante_crear' or request.resolver_match.url_name == 'admin_practicante_editar' or request.resolver_match.url_name == 'admin_practicante_perfil' %}active{% endif %}">
+            Practicantes
+          </a>
+
+          <a href="{% url 'admin_proyectos' %}"
+             class="{% if request.resolver_match.url_name == 'admin_proyectos' or request.resolver_match.url_name == 'admin_proyecto_detalle' %}active{% endif %}">
+            Proyectos
+          </a>
+
+          <a href="{% url 'admin_horas' %}"
+             class="{% if request.resolver_match.url_name == 'admin_horas' %}active{% endif %}">
+            Horas
+          </a>
+
+          <a href="{% url 'admin_reportes' %}"
+             class="{% if request.resolver_match.url_name == 'admin_reportes' %}active{% endif %}">
+            Reporte
+          </a>
+
+          <a href="{% url 'admin_perfil' %}"
+             class="{% if request.resolver_match.url_name == 'admin_perfil' or request.resolver_match.url_name == 'admin_perfil_editar' %}active{% endif %}">
+            Mi Perfil
+          </a>
+
+        <!-- ================= PRACTICANTE ================= -->
+        {% else %}
+
+          <!-- Si el usuario es controller, puede cambiar a admin -->
+          {% if request.user.is_staff %}
+            <a href="{% url 'admin_practicantes' %}" class="nav-switch">
+              Ir a admin
             </a>
+          {% endif %}
 
-            <a href="{% url 'horas' %}" class="{% if request.path == '/horas/' %}active{% endif %}">
-                Registro de horas
-            </a>
+          <a href="{% url 'inicio' %}"
+             class="{% if request.resolver_match.url_name == 'inicio' %}active{% endif %}">
+            Inicio
+          </a>
 
-            <a href="{% url 'perfil' %}" class="{% if request.path == '/perfil/' %}active{% endif %}">
-                Mi perfil
-            </a>
-        </div>
-{% endif %}
+          <a href="{% url 'proyectos' %}"
+             class="{% if request.resolver_match.url_name == 'proyectos' %}active{% endif %}">
+            Mis proyectos
+          </a>
 
-        <!-- FOTO PERFIL DERECHA -->
-        {% if request.user.is_authenticated %}
-        <div class="profile">
-            {% if request.user.practicante.foto_perfil %}
-                <img src="{{ request.user.practicante.foto_perfil.url }}">
-            {% else %}
-                <img src="https://i.pravatar.cc/100">
-            {% endif %}
-        </div>
+          <a href="{% url 'horas' %}"
+             class="{% if request.resolver_match.url_name == 'horas' %}active{% endif %}">
+            Registro de horas
+          </a>
+
+          <a href="{% url 'perfil' %}"
+             class="{% if request.resolver_match.url_name == 'perfil' %}active{% endif %}">
+            Mi perfil
+          </a>
+
         {% endif %}
 
+      </div>
     </div>
 
-    <div class="content">
-        {% block content %}
-        {% endblock %}
+    <!-- ================= FOTO DE PERFIL ================= -->
+    <div class="profile">
+      {% if navbar_avatar_url %}
+        <img src="{{ navbar_avatar_url }}" alt="avatar">
+      {% else %}
+        <img src="{% static 'images/default-avatar.png' %}" alt="avatar">
+      {% endif %}
     </div>
+    {% endif %}
+
+  </div>
+
+  <!-- ================= CONTENIDO DE LAS VISTAS ================= -->
+  <div class="content">
+    {% block content %}{% endblock %}
+  </div>
 
 </body>
 </html>

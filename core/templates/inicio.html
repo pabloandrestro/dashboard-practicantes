@@ -4,6 +4,10 @@
 {% block content %}
 
 <style>
+  /* Contenedor principal de la vista Inicio:
+     - limito ancho para que no se estire demasiado en pantallas grandes
+     - centro el contenido con margin auto
+     - padding para separación del borde */
   .inicio-wrap{
     max-width:1100px;
     margin:0 auto;
@@ -11,7 +15,10 @@
     box-sizing:border-box;
   }
 
-  /* CONTENEDOR GENERAL */
+  /* Contenedor general:
+     - organizo foto (izquierda) y contenido (derecha) en fila
+     - gap para separación visual
+     - alineo arriba */
   .top-section{
     display:flex;
     align-items:flex-start;
@@ -19,13 +26,16 @@
     justify-content:center;
   }
 
-  /* BLOQUE DERECHO (todo alineado) */
+  /* Bloque derecho (contenido):
+     - limito ancho para que la tarjeta no quede exageradamente grande
+     - width 100% para que use el espacio disponible */
   .right-block{
     max-width:750px;
     width:100%;
   }
 
-  /* TITULO */
+  /* Título bienvenida:
+     - tamaño grande, peso medio y alineado a la izquierda */
   .bienvenida{
     font-size:32px;
     font-weight:500;
@@ -33,7 +43,10 @@
     text-align:left;
   }
 
-  /* FOTO */
+  /* Avatar (foto de perfil):
+     - tamaño fijo
+     - círculo con border-radius 50%
+     - object-fit cover para que no se deforme */
   .avatar{
     width:180px;
     height:180px;
@@ -42,7 +55,10 @@
     margin-top:10px;
   }
 
-  /* TARJETA PERFIL */
+  /* Tarjeta con datos del practicante:
+     - borde negro y esquinas redondeadas
+     - padding interno
+     - line-height para legibilidad */
   .perfil-card{
     border:2px solid #000;
     border-radius:25px;
@@ -53,13 +69,16 @@
     box-sizing:border-box;
   }
 
+  /* Nombre dentro de la tarjeta */
   .perfil-nombre{
     font-size:20px;
     font-weight:600;
     margin-bottom:10px;
   }
 
-  /* STATS */
+  /* Contenedor de estadísticas:
+     - distribuyo 3 tarjetas en fila
+     - gap para separación */
   .stats{
     display:flex;
     justify-content:space-between;
@@ -68,6 +87,7 @@
     width:100%;
   }
 
+  /* Caja individual de estadística */
   .stat-box{
     border:2px solid #000;
     border-radius:20px;
@@ -76,17 +96,22 @@
     flex:1;
   }
 
+  /* Título de estadística */
   .stat-title{
     font-size:16px;
     margin-bottom:8px;
   }
 
+  /* Número principal de estadística */
   .stat-num{
     font-size:24px;
     font-weight:700;
   }
 
-  /* RESPONSIVE */
+  /* Responsive:
+     - bajo 900px apilo todo en columna
+     - reduzco el tamaño del avatar
+     - stats pasa a columna para que no se apriete */
   @media (max-width:900px){
     .top-section{
       flex-direction:column;
@@ -113,22 +138,27 @@
 
   <div class="top-section">
 
-    <!-- FOTO -->
+    <!-- FOTO DE PERFIL:
+         - si el practicante tiene foto, muestro su imagen
+         - si no tiene, uso avatar por defecto desde static -->
     {% if practicante.foto_perfil %}
       <img src="{{ practicante.foto_perfil.url }}" class="avatar" alt="Foto perfil">
     {% else %}
       <img src="{% static 'images/default-avatar.png' %}" class="avatar" alt="Foto perfil">
     {% endif %}
 
-    <!-- BLOQUE DERECHO -->
+    <!-- BLOQUE DERECHO:
+         - contiene bienvenida, tarjeta de datos y estadísticas -->
     <div class="right-block">
 
-      <!-- BIENVENIDA -->
+      <!-- BIENVENIDA:
+           - saludo usando el nombre del usuario autenticado -->
       <h1 class="bienvenida">
         Bienvenido/a, {{ request.user.first_name }}!
       </h1>
 
-      <!-- CARD INFO -->
+      <!-- CARD INFO:
+           - muestra datos principales del practicante -->
       <div class="perfil-card">
 
         <div class="perfil-nombre">
@@ -148,7 +178,8 @@
 
       </div>
 
-      <!-- STATS -->
+      <!-- STATS:
+           - resumen numérico calculado en la vista (horas_totales, dias_activos, proyectos_activos) -->
       <div class="stats">
 
         <div class="stat-box">

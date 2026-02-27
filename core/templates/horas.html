@@ -2,24 +2,28 @@
 {% block content %}
 
 <style>
+/* Contenedor principal de la vista de horas */
 .horas-wrap{
   max-width:1100px;
   margin:0 auto;
   padding:30px;
 }
 
+/* Contenedor de los botones de acción */
 .acciones-horas{
   display:flex;
   align-items:center;
   margin-top:30px;
 }
 
+/* Agrupación de botones */
 .grupo-botones{
   display:flex;
   gap:15px;
   flex-wrap:wrap;
 }
 
+/* Botones principales de registro de horas */
 .btn-hora{
   background:#14b8d4;
   color:white;
@@ -32,38 +36,44 @@
   min-width:170px;
 }
 
+/* Hover botón */
 .btn-hora:hover{ filter: brightness(0.95); }
 
+/* Estado deshabilitado de botones */
 .btn-hora:disabled{
   opacity:0.45;
   cursor:not-allowed;
   filter:none;
 }
 
-/* TABLA */
+/* ================= TABLA DE HISTORIAL ================= */
 .tabla-horas{
   width:100%;
   margin-top:20px;
   border-collapse:collapse;
 }
 
+/* Encabezados tabla */
 .tabla-horas th{
   background:#cfd6ff;
   padding:12px;
 }
 
+/* Celdas tabla */
 .tabla-horas td{
   text-align:center;
   padding:12px;
   border-bottom:2px solid #cfd6ff;
 }
 
+/* Header superior: título + reloj */
 .header-horas{
   display:flex;
   justify-content:space-between;
   align-items:center;
 }
 
+/* Texto del reloj */
 .hora-actual{
   font-size:18px;
   color:#555;
@@ -72,35 +82,42 @@
 </style>
 
 <div class="horas-wrap">
+
+  <!-- Encabezado principal con reloj en vivo -->
   <div class="header-horas">
     <h1>Registrar</h1>
 
     <div class="hora-actual">
         Hora Actual <span id="reloj"></span>
     </div>
-    </div>
+  </div>
 
+  <!-- ================= BOTONES DE ACCIÓN ================= -->
   <div class="acciones-horas">
     <div class="grupo-botones">
 
+      <!-- Registrar inicio de jornada -->
       <form method="POST">{% csrf_token %}
         <button name="accion" value="inicio" class="btn-hora" {% if not can_inicio %}disabled{% endif %}>
           Inicio
         </button>
       </form>
 
+      <!-- Registrar inicio de pausa -->
       <form method="POST">{% csrf_token %}
         <button name="accion" value="inicio_pausa" class="btn-hora" {% if not can_inicio_pausa %}disabled{% endif %}>
           Inicio pausa
         </button>
       </form>
 
+      <!-- Registrar fin de pausa -->
       <form method="POST">{% csrf_token %}
         <button name="accion" value="fin_pausa" class="btn-hora" {% if not can_fin_pausa %}disabled{% endif %}>
           Fin pausa
         </button>
       </form>
 
+      <!-- Registrar término de jornada -->
       <form method="POST">{% csrf_token %}
         <button name="accion" value="termino" class="btn-hora" {% if not can_termino %}disabled{% endif %}>
           Término
@@ -110,14 +127,17 @@
     </div>
   </div>
 
+  <!-- ================= HISTORIAL ================= -->
   <h2 style="margin-top:35px;">Historial</h2>
 
+  <!-- Botón descargar excel -->
   <div style="display:flex; justify-content:flex-end; margin-top:10px;">
     <a href="{% url 'descargar_horas_csv' %}" class="btn-hora" style="text-decoration:none;">
         Descargar Excel
     </a>
-</div>
+  </div>
 
+  <!-- Tabla historial de registros -->
   <table class="tabla-horas">
     <tr>
       <th>Fecha</th>
@@ -144,21 +164,22 @@
 </div>
 
 <script>
-    function actualizarReloj(){
-    const ahora = new Date()
+/* Función que actualiza el reloj cada segundo */
+function actualizarReloj(){
+  const ahora = new Date()
 
-    let horas = ahora.getHours().toString().padStart(2, '0')
-    let minutos = ahora.getMinutes().toString().padStart(2, '0')
-    let segundos = ahora.getSeconds().toString().padStart(2, '0')
+  let horas = ahora.getHours().toString().padStart(2, '0')
+  let minutos = ahora.getMinutes().toString().padStart(2, '0')
+  let segundos = ahora.getSeconds().toString().padStart(2, '0')
 
-    document.getElementById("reloj").innerText = `${horas}:${minutos}:${segundos}`
-    }
+  document.getElementById("reloj").innerText = `${horas}:${minutos}:${segundos}`
+}
 
-    // actualizar cada segundo
-    setInterval(actualizarReloj, 1000)
+/* Se ejecuta cada segundo */
+setInterval(actualizarReloj, 1000)
 
-    // ejecutar inmediatamente
-    actualizarReloj()
+/* Ejecutar inmediatamente al cargar */
+actualizarReloj()
 </script>
 
 {% endblock %}

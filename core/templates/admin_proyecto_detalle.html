@@ -1,0 +1,322 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+  /* Contenedor principal:
+     - Defino ancho máximo para mantener consistencia visual.
+     - Centro el contenido y aplico padding. */
+  .wrap{
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 25px 40px 40px;
+    box-sizing: border-box;
+  }
+
+  /* Barra superior:
+     - Uso flex para separar el botón de volver hacia la derecha. */
+  .top{
+    display:flex;
+    justify-content:space-between;
+    gap: 18px;
+    align-items:flex-start;
+    margin-bottom: 18px;
+  }
+
+  /* Botón base */
+  .btn{
+    background:#14b8d4;
+    color:#fff;
+    border:none;
+    padding:10px 16px;
+    border-radius:12px;
+    font-weight:700;
+    cursor:pointer;
+    text-decoration:none;
+    display:inline-block;
+    white-space:nowrap;
+  }
+  .btn:hover{ filter:brightness(0.95); }
+
+  /* Bloque “hero” del proyecto:
+     - Tarjeta con borde.
+     - Uso grid para tener imagen a la izquierda y contenido a la derecha. */
+  .hero{
+    border: 2px solid #111;
+    border-radius: 18px;
+    background:#fff;
+    padding: 18px;
+    display:grid;
+    grid-template-columns: 260px 1fr;
+    gap: 18px;
+    align-items:start;
+  }
+
+  /* Imagen del proyecto:
+     - object-fit cover para que no se deforme. */
+  .img{
+    width:100%;
+    height: 190px;
+    border-radius: 18px;
+    object-fit: cover;
+    background:#eee;
+  }
+
+  /* Título del proyecto */
+  .h-title{
+    margin: 0 0 10px 0;
+    font-size: 34px;
+  }
+
+  /* Metadatos del proyecto (célula, fechas, avance) */
+  .meta{
+    margin: 6px 0;
+    font-size: 16px;
+    color:#222;
+  }
+
+  /* Badge de estado del proyecto */
+  .badge{
+    display:inline-block;
+    padding: 10px 18px;
+    border-radius: 999px;
+    color:#fff;
+    font-weight: 800;
+    margin-top: 8px;
+  }
+  .badge.activo{ background:#7bd84f; }
+  .badge.pausado{ background:#ffd84d; color:#fff; }
+  .badge.terminado{ background:#1f56ff; }
+
+  /* Grid inferior:
+     - 2 columnas: descripción + integrantes,
+       y luego reportes ocupando ancho completo. */
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 18px;
+  }
+
+  /* Tarjetas generales */
+  .card{
+    border:2px solid #111;
+    border-radius: 18px;
+    background:#fff;
+    padding: 16px 18px;
+  }
+
+  /* Títulos dentro de tarjetas */
+  .card h2{
+    margin:0 0 10px 0;
+    font-size: 22px;
+  }
+
+  /* Texto descriptivo */
+  .text{
+    margin:0;
+    line-height: 1.5;
+    color:#222;
+  }
+
+  /* Filas dentro de listas (integrantes/reportes):
+     - flex para alinear contenido y usuario a la derecha */
+  .row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    gap: 12px;
+  }
+  .row:last-child{ border-bottom:none; }
+
+  /* Bloque usuario:
+     - avatar + nombre + rol */
+  .user{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  /* Avatar integrante */
+  .avatar{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    object-fit:cover;
+    background:#ddd;
+  }
+
+  /* Nombre del integrante (con ellipsis si es muy largo) */
+  .u-name{
+    font-weight:700;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  /* Rol del integrante */
+  .u-role{
+    font-size: 13px;
+    opacity: 0.75;
+  }
+
+  /* Texto auxiliar */
+  .small{
+    font-size: 13px;
+    opacity: 0.75;
+  }
+
+  /* Bloque reporte */
+  .report{
+    display:flex;
+    flex-direction:column;
+    gap: 6px;
+  }
+  .report .head{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    align-items:flex-start;
+  }
+  .report .desc{
+    margin:0;
+    line-height:1.45;
+  }
+
+  /* Responsive: paso el hero a una columna y el grid inferior también */
+  @media (max-width: 980px){
+    .hero{ grid-template-columns: 1fr; }
+    .img{ height: 220px; }
+    .grid{ grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 750px){
+    .wrap{ padding: 18px 18px 30px; }
+  }
+</style>
+
+<div class="wrap">
+
+  <div class="top">
+    <div></div>
+
+    <!-- Botón para volver al listado general de proyectos del panel -->
+    <a class="btn" href="{% url 'admin_proyectos' %}">Volver a proyectos</a>
+  </div>
+
+  <!-- Sección principal del proyecto: imagen + datos -->
+  <div class="hero">
+    <div>
+      <!-- Si el proyecto tiene imagen, la muestro; si no, uso una imagen por defecto -->
+      {% if proyecto.imagen %}
+        <img class="img" src="{{ proyecto.imagen.url }}" alt="Imagen proyecto">
+      {% else %}
+        <img class="img" src="{% static 'images/proyectos/default.png' %}" alt="Imagen proyecto">
+      {% endif %}
+    </div>
+
+    <div>
+      <h1 class="h-title">{{ proyecto.nombre }}</h1>
+
+      <!-- Metadatos del proyecto -->
+      <div class="meta"><b>Célula:</b> {{ proyecto.numero_celula }}</div>
+      <div class="meta"><b>Inicio:</b> {{ proyecto.fecha_inicio|date:"d-m-Y" }}</div>
+
+      <div class="meta"><b>Término:</b>
+        {% if proyecto.fecha_termino %}{{ proyecto.fecha_termino|date:"d-m-Y" }}{% else %}-{% endif %}
+      </div>
+
+      <div class="meta"><b>Avance:</b> {{ proyecto.porcentaje_avance }}%</div>
+
+      <!-- Badge de estado (activo/pausado/terminado) -->
+      {% if proyecto.estado|lower == "activo" %}
+        <div class="badge activo">Activo</div>
+      {% elif proyecto.estado|lower == "pausado" %}
+        <div class="badge pausado">Pausado</div>
+      {% else %}
+        <div class="badge terminado">Terminado</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <!-- Descripción del proyecto -->
+    <div class="card">
+      <h2>Descripción</h2>
+      <p class="text">{{ proyecto.descripcion }}</p>
+    </div>
+
+    <!-- Integrantes del proyecto -->
+    <div class="card">
+      <h2>Integrantes</h2>
+
+      {% if integrantes and integrantes|length > 0 %}
+        {% for part in integrantes %}
+          <div class="row">
+            <div class="user">
+              <!-- Foto del integrante si existe; si no, avatar por defecto -->
+              {% if part.foto_perfil %}
+                <img class="avatar" src="{{ part.foto_perfil.url }}" alt="avatar">
+              {% else %}
+                <img class="avatar" src="{% static 'images/default-avatar.png' %}" alt="avatar">
+              {% endif %}
+
+              <div style="min-width:0;">
+                <div class="u-name">
+                  {{ part.usuario.first_name }} {{ part.usuario.last_name }}
+                </div>
+                <div class="u-role">{{ part.rol_en_proyecto }}</div>
+              </div>
+            </div>
+
+            <div class="small">@{{ part.usuario.username }}</div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="small">Este proyecto no tiene integrantes todavía.</div>
+      {% endif %}
+    </div>
+
+    <!-- Reportes de avance (ocupan ancho completo) -->
+    <div class="card" style="grid-column:1 / -1;">
+      <h2>Reportes de avance</h2>
+
+      {% if reportes and reportes|length > 0 %}
+        {% for r in reportes %}
+          <div class="row" style="align-items:flex-start;">
+            <div class="report" style="flex:1;">
+              <div class="head">
+                <div>
+                  <b>{{ r.usuario.first_name }} {{ r.usuario.last_name }}</b>
+                  <span class="small">(@{{ r.usuario.username }})</span>
+                </div>
+                <div class="small">
+                  {% if r.fecha %}{{ r.fecha|date:"d-m-Y" }}{% else %}-{% endif %}
+                </div>
+              </div>
+
+              <p class="desc">{{ r.descripcion }}</p>
+
+              <div class="small">
+                {% if r.porcentaje_avance is not None %}
+                  % avance reportado: <b>{{ r.porcentaje_avance }}%</b>
+                {% else %}
+                  % avance reportado: -
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="small">No hay reportes todavía.</div>
+      {% endif %}
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

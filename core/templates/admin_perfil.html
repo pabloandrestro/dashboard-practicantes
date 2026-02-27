@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+  /* Contenedor principal:
+     - Limito ancho para que el contenido no sea muy ancho.
+     - Centro horizontalmente con margin auto.
+     - Padding para separación del borde. */
+  .wrap{
+    max-width:1000px;
+    margin:0 auto;
+    padding:30px 40px;
+    box-sizing:border-box;
+  }
+
+  /* Barra superior:
+     - flex para alinear título a la izquierda y botones a la derecha.
+     - gap para separar elementos.
+     - margin-bottom para dar espacio hacia la tarjeta. */
+  .top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+    gap:14px;
+  }
+
+  /* Título principal "Mi perfil" */
+  .top h1{
+    margin:0;
+    font-size:48px;
+    font-weight:900;
+  }
+
+  /* Botón base */
+  .btn{
+    background:#14b8d4;
+    color:#fff;
+    border:none;
+    padding:10px 16px;
+    border-radius:12px;
+    font-weight:800;
+    text-decoration:none;
+    display:inline-block;
+    white-space:nowrap;
+  }
+
+  .btn:hover{ filter:brightness(0.95); }
+
+  /* Header del perfil (avatar + datos) */
+  .head{
+    display:flex;
+    gap:18px;
+    align-items:center;
+  }
+
+  /* Avatar */
+  .avatar{
+    width:130px;
+    height:130px;
+    border-radius:50%;
+    object-fit:cover;
+    background:#ddd;
+  }
+
+  /* Nombre */
+  .name{
+    margin:0;
+    font-size:28px;
+    font-weight:900;
+  }
+
+  /* Datos secundarios */
+  .meta{
+    margin-top:6px;
+    font-size:15px;
+    opacity:0.8;
+  }
+
+  @media (max-width: 900px){
+    .wrap{ padding:18px 18px; }
+    .top h1{ font-size:40px; }
+  }
+
+  /* Botón logout en rojo */
+  .btn-logout{
+    background:#ef4444;
+    color:white;
+  }
+
+  .btn-logout:hover{
+    filter:brightness(0.9);
+  }
+</style>
+
+<div class="wrap">
+
+  <div class="top">
+    <h1>Mi perfil</h1>
+
+    <!-- Contenedor de botones: editar perfil y cerrar sesión -->
+    <div style="display:flex; gap:10px;">
+
+      <!-- Botón que lleva al formulario de edición de perfil -->
+      <a class="btn" href="{% url 'admin_perfil_editar' %}">Editar perfil</a>
+
+      <!-- Formulario POST para cerrar sesión -->
+      <form method="POST" action="{% url 'logout' %}" style="margin:0;">
+        {% csrf_token %}
+        <button class="btn btn-logout" type="submit">
+          Cerrar sesión
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Tarjeta que contiene la información del perfil -->
+  <div class="card">
+
+    <div class="head">
+
+      <!-- Muestro la foto de perfil si existe, si no uso avatar por defecto -->
+      {% if perfil_admin.foto_perfil %}
+        <img class="avatar" src="{{ perfil_admin.foto_perfil.url }}" alt="foto">
+      {% else %}
+        <img class="avatar" src="{% static 'images/default-avatar.png' %}" alt="foto">
+      {% endif %}
+
+      <div>
+        <!-- Nombre completo del usuario -->
+        <p class="name">{{ usuario.first_name }} {{ usuario.last_name }}</p>
+
+        <!-- Username con @ -->
+        <div class="meta"><b>@{{ usuario.username }}</b></div>
+
+        <!-- Email del usuario -->
+        <div class="meta">{{ usuario.email|default:"-" }}</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}

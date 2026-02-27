@@ -4,20 +4,24 @@
 {% block content %}
 
 <style>
+  /* Contenedor principal del detalle del proyecto */
   .detalle-wrap{
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px 40px;
   }
 
+  /* Header superior:
+     - contiene imagen, info y botón acción (unirse/salir) */
   .detalle-header{
     display:flex;
     gap:30px;
     align-items:center;
     margin-bottom:30px;
-    position: relative; /* para posicionar botones a la derecha */
+    position: relative; /* necesario para posicionar botón a la derecha */
   }
 
+  /* Imagen del proyecto */
   .proyecto-img{
     width:180px;
     height:120px;
@@ -26,16 +30,19 @@
     background:#eee;
   }
 
+  /* Título del proyecto */
   .detalle-info h1{
     font-size:34px;
     margin: 0 0 10px 0;
   }
 
+  /* Texto de información */
   .detalle-info p{
     font-size:18px;
     margin:3px 0;
   }
 
+  /* Botón para cambiar imagen del proyecto */
   .btn-img{
     margin-top:10px;
     display:inline-block;
@@ -48,6 +55,7 @@
     border:none;
   }
 
+  /* Botón crear nuevo reporte */
   .btn-nuevo{
     margin-top:20px;
     background:#14b8d4;
@@ -59,7 +67,7 @@
     font-weight:600;
   }
 
-  /* Lista integrantes*/
+  /* ================= INTEGRANTES ================= */
   .integrantes-box{
     margin-top: 30px;
     background:#f4f4f4;
@@ -72,12 +80,14 @@
     margin-bottom:15px;
   }
 
+  /* Lista de tarjetas de integrantes */
   .integrantes-lista{
     display:flex;
     flex-wrap:wrap;
     gap:15px;
   }
 
+  /* Card individual integrante */
   .integrante-card{
     background:white;
     border-radius:12px;
@@ -88,6 +98,7 @@
     min-width:200px;
   }
 
+  /* Foto integrante */
   .integrante-img{
     width:40px;
     height:40px;
@@ -96,16 +107,19 @@
     object-fit:cover;
   }
 
+  /* Nombre integrante */
   .integrante-nombre{
     font-weight:600;
   }
 
+  /* Rol integrante */
   .integrante-rol{
     font-size:13px;
     color:#666;
   }
 
-  /* LISTA REPORTES */
+  /* ================= REPORTES ================= */
+
   .reportes-lista{
     display:flex;
     flex-direction:column;
@@ -113,12 +127,14 @@
     margin-top:30px;
   }
 
+  /* Card reporte */
   .reporte-card{
     background:#f4f4f4;
     border-radius:16px;
     padding:18px 22px;
   }
 
+  /* Encabezado reporte */
   .reporte-top{
     display:flex;
     justify-content:space-between;
@@ -126,23 +142,27 @@
     margin-bottom:10px;
   }
 
+  /* Usuario del reporte */
   .reporte-user{
     font-weight:600;
     font-size:16px;
   }
 
+  /* Contenedor derecha (fecha + botón borrar) */
   .reporte-right{
     display:flex;
     align-items:center;
     gap:12px;
   }
 
+  /* Fecha reporte */
   .reporte-fecha{
     font-size:14px;
     color:#555;
     white-space: nowrap;
   }
 
+  /* Descripción del reporte */
   .reporte-desc{
     font-size:15px;
     color:#333;
@@ -150,6 +170,7 @@
     margin-top: 6px;
   }
 
+  /* Botón eliminar reporte */
   .btn-del{
     background:#ef4444;
     color:white;
@@ -160,11 +181,9 @@
     font-weight:600;
     font-size:12px;
   }
-  .btn-del:hover{
-    filter: brightness(0.9);
-  }
+  .btn-del:hover{ filter: brightness(0.9); }
 
-  /* Botón unirse (derecha absoluta) */
+  /* Botón unirse al proyecto */
   .btn-accion{
     background:#14b8d4;
     color:white;
@@ -181,9 +200,8 @@
     top: 50%;
     transform: translateY(-50%);
   }
-  .btn-accion:hover{ filter: brightness(0.95); }
 
-  /* Botón salir (misma posición que Unirme) */
+  /* Botón salir del proyecto */
   .btn-salir{
     background:#ef4444;
     color:white;
@@ -200,12 +218,10 @@
     top: 50%;
     transform: translateY(-50%);
   }
-  .btn-salir:hover{ filter: brightness(0.9); }
 
-  /* Rol */
-  .rol-box{
-    margin-top: 6px;
-  }
+  /* ================= ROL ================= */
+
+  .rol-box{ margin-top: 6px; }
 
   .rol-top{
     display:flex;
@@ -213,6 +229,7 @@
     gap:12px;
   }
 
+  /* Botón editar rol */
   .btn-mini{
     background:#e5e7eb;
     border:none;
@@ -222,9 +239,8 @@
     font-weight:600;
     font-size:13px;
   }
-  .btn-mini:hover{ filter: brightness(0.97); }
 
-  /* Form editar rol: input + guardar juntos */
+  /* Formulario editar rol */
   .rol-form{
     display:flex;
     align-items:center;
@@ -232,9 +248,10 @@
     margin-top:10px;
   }
 
+  /* Input rol */
   .input-rol{
     flex: 1;
-    max-width: 360px;   /* ajusta si lo quieres más largo */
+    max-width: 360px;
     padding:10px 14px;
     border-radius:10px;
     border:none;
@@ -242,6 +259,7 @@
     font-size:14px;
   }
 
+  /* Botón guardar rol */
   .btn-guardar{
     background:#14b8d4;
     color:white;
@@ -251,71 +269,51 @@
     font-weight:600;
     font-size:14px;
     cursor:pointer;
-    white-space: nowrap;
   }
-  .btn-guardar:hover{ filter: brightness(0.95); }
 </style>
 
 <div class="detalle-wrap">
 
+  <!-- ================= HEADER ================= -->
   <div class="detalle-header">
 
-    <!-- IMAGEN -->
+    <!-- IMAGEN DEL PROYECTO -->
     <div>
       {% if proyecto.imagen %}
-        <img src="{{ proyecto.imagen.url }}" class="proyecto-img" alt="Imagen proyecto">
+        <img src="{{ proyecto.imagen.url }}" class="proyecto-img">
       {% else %}
-        <img src="{% static 'images/default.png' %}" class="proyecto-img" alt="Imagen proyecto">
+        <img src="{% static 'images/default.png' %}" class="proyecto-img">
       {% endif %}
 
-      <!-- CAMBIAR FOTO: SOLO SI PUEDE EDITAR -->
+      <!-- CAMBIAR FOTO (solo si tiene permisos) -->
       {% if can_edit %}
-      <form id="formFotoProyecto" method="POST" enctype="multipart/form-data" style="margin-top:10px;">
+      <form id="formFotoProyecto" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-
-        <input
-          type="file"
-          name="imagen"
-          id="inputImagen"
-          accept="image/*"
-          style="display:none"
-          onchange="document.getElementById('formFotoProyecto').submit();"
-        >
-
-        <button
-          type="button"
-          class="btn-img"
-          onclick="document.getElementById('inputImagen').click();"
-        >
-          Cambiar foto
-        </button>
+        <input type="file" name="imagen" id="inputImagen" style="display:none" onchange="formFotoProyecto.submit()">
+        <button type="button" class="btn-img" onclick="inputImagen.click()">Cambiar foto</button>
       </form>
       {% endif %}
     </div>
 
-    <!-- INFO -->
+    <!-- INFORMACIÓN DEL PROYECTO -->
     <div class="detalle-info">
       <h1>{{ proyecto.nombre }}</h1>
       <p><b>Inicio:</b> {{ proyecto.fecha_inicio|date:"d-m-Y" }}</p>
       <p><b>Estado:</b> {{ proyecto.estado }} | <b>Avance:</b> {{ proyecto.porcentaje_avance }}%</p>
       <p><b>Célula:</b> {{ proyecto.numero_celula }}</p>
 
+      <!-- ROL DEL USUARIO -->
       {% if participacion %}
         <div class="rol-box">
           <div class="rol-top">
-            <p style="margin:0;"><b>Tu rol:</b> {{ participacion.rol_en_proyecto }}</p>
+            <p><b>Tu rol:</b> {{ participacion.rol_en_proyecto }}</p>
             <button type="button" class="btn-mini" onclick="toggleRolEdit()">Editar</button>
           </div>
 
+          <!-- FORM EDITAR ROL -->
           <form id="formRol" method="POST" action="{% url 'cambiar_mi_rol' proyecto.id %}" class="rol-form" style="display:none;">
             {% csrf_token %}
-            <input
-              type="text"
-              name="rol"
-              class="input-rol"
-              placeholder="Escribe tu nuevo rol"
-              value="{{ participacion.rol_en_proyecto }}"
-            >
+            <input type="text" name="rol" class="input-rol" value="{{ participacion.rol_en_proyecto }}">
             <button type="submit" class="btn-guardar">Guardar</button>
           </form>
         </div>
@@ -324,7 +322,7 @@
       {% endif %}
     </div>
 
-    <!-- BOTÓN DERECHA (UNO U OTRO) -->
+    <!-- BOTÓN UNIRSE / SALIR -->
     {% if participacion %}
       <form method="POST" action="{% url 'proyecto_salir' proyecto.id %}">
         {% csrf_token %}
@@ -339,7 +337,7 @@
 
   </div>
 
-  <!-- INTEGRANTES -->
+  <!-- ================= INTEGRANTES ================= -->
   <div class="integrantes-box">
     <h2>Integrantes del proyecto</h2>
 
@@ -348,9 +346,9 @@
         <div class="integrante-card">
 
           {% if p.foto_perfil %}
-            <img src="{{ p.foto_perfil.url }}" class="integrante-img" alt="Foto">
+            <img src="{{ p.foto_perfil.url }}" class="integrante-img">
           {% else %}
-            <img src="{% static 'images/default-avatar.png' %}" class="integrante-img" alt="Foto">
+            <img src="{% static 'images/default-avatar.png' %}" class="integrante-img">
           {% endif %}
 
           <div>
@@ -369,14 +367,14 @@
     </div>
   </div>
 
-  <!-- NUEVO REPORTE: SOLO SI PUEDE EDITAR -->
+  <!-- ================= NUEVO REPORTE ================= -->
   {% if can_edit %}
     <a href="{% url 'reporte_crear' proyecto.id %}" class="btn-nuevo">
       + Nuevo reporte
     </a>
   {% endif %}
 
-  <!-- LISTA REPORTES -->
+  <!-- ================= LISTA REPORTES ================= -->
   <div class="reportes-lista">
     {% for r in reportes %}
       <div class="reporte-card">
@@ -389,18 +387,13 @@
               {{ r.fecha|date:"d-m-Y" }} • {{ r.porcentaje_avance }}%
             </span>
 
-            {% if request.user.is_staff %}
-              <form method="POST" action="{% url 'reporte_borrar' r.id %}" style="margin:0;">
-                {% csrf_token %}
-                <button type="submit" class="btn-del">Borrar</button>
-              </form>
-            {% elif can_edit and r.usuario.id == request.user.id %}
-              <form method="POST" action="{% url 'reporte_borrar' r.id %}" style="margin:0;">
+            <!-- BORRAR REPORTE (admin o dueño) -->
+            {% if request.user.is_staff or r.usuario.id == request.user.id %}
+              <form method="POST" action="{% url 'reporte_borrar' r.id %}">
                 {% csrf_token %}
                 <button type="submit" class="btn-del">Borrar</button>
               </form>
             {% endif %}
-
           </div>
         </div>
 
@@ -415,14 +408,10 @@
 </div>
 
 <script>
+  /* Muestra/oculta el formulario para editar el rol del usuario */
   function toggleRolEdit(){
     const f = document.getElementById("formRol");
     f.style.display = (f.style.display === "none" || f.style.display === "") ? "flex" : "none";
-    if (f.style.display === "flex") {
-      const input = f.querySelector("input[name='rol']");
-      input && input.focus();
-      input && input.select();
-    }
   }
 </script>
 

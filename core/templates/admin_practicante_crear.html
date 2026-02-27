@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  /* Contenedor principal:
+     - Limito el ancho para que el formulario no se estire demasiado.
+     - Centro el contenido con margin: 0 auto.
+     - Agrego padding para separación de bordes. */
+  .wrap{
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 30px 40px;
+  }
+
+  /* Tarjeta del formulario:
+     - Borde negro para destacar el bloque.
+     - Esquinas redondeadas.
+     - Padding interno y fondo blanco. */
+  .card{
+    border: 2px solid #111;
+    border-radius: 18px;
+    padding: 26px 28px;
+    background: #fff;
+  }
+
+  /* Título de la tarjeta. */
+  .title{
+    font-size: 34px;
+    margin: 0 0 18px 0;
+  }
+
+  /* Bloque por campo:
+     - Los organizo en columna.
+     - gap para separar label y input.
+     - margin-bottom para separar campos entre sí. */
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  /* Estilo de etiquetas. */
+  label{ font-weight: 600; }
+
+  /* Estilo base de inputs:
+     - Fondo gris suave y borde sutil.
+     - Padding y bordes redondeados para coherencia visual. */
+  input{
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    background: #f4f4f4;
+    font-size: 15px;
+  }
+
+  /* Botón principal:
+     - Color celeste de tu sistema.
+     - Sin borde, con cursor pointer.
+     - Padding para tamaño cómodo. */
+  .btn{
+    margin-top: 10px;
+    background:#14b8d4;
+    color:white;
+    border:none;
+    cursor:pointer;
+    padding: 12px 22px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  /* Mensaje de error:
+     - Fondo rojo claro y texto rojo oscuro para resaltar validaciones. */
+  .err{
+    margin: 10px 0 0 0;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #fee2e2;
+    color: #7f1d1d;
+    font-weight: 600;
+  }
+</style>
+
+<div class="wrap">
+  <div class="card">
+    <h1 class="title">Crear practicante</h1>
+
+    <!-- Formulario:
+         - method POST porque estoy creando un usuario/practicante.
+         - csrf_token para protección CSRF obligatoria en Django. -->
+    <form method="POST">
+      {% csrf_token %}
+
+      <div class="field">
+        <!-- Nota técnica:
+             Aquí usé <th> como si fuera un label, pero <th> es un tag de tablas.
+             No lo cambio porque me pediste no modificar estructura, pero lo dejo documentado. -->
+        <th>Nombre de usuario:</th>
+
+        <!-- Renderizo el widget de Django para username -->
+        {{ form.username }}
+
+        <!-- Muestro errores del campo si existen -->
+        {% if form.username.errors %}<div class="err">{{ form.username.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="field">
+        <th>Nombre:</th>
+        {{ form.first_name }}
+        {% if form.first_name.errors %}<div class="err">{{ form.first_name.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="field">
+        <th>Apellido:</th>
+        {{ form.last_name }}
+        {% if form.last_name.errors %}<div class="err">{{ form.last_name.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="field">
+        <th>Contraseña:</th>
+        {{ form.password1 }}
+        {% if form.password1.errors %}<div class="err">{{ form.password1.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="field">
+        <th>Repetir contraseña:</th>
+        {{ form.password2 }}
+        {% if form.password2.errors %}<div class="err">{{ form.password2.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <!-- Errores generales del formulario (no asociados a un campo específico) -->
+      {% if form.non_field_errors %}
+        <div class="err">{{ form.non_field_errors|striptags }}</div>
+      {% endif %}
+
+      <!-- Botón para enviar el formulario -->
+      <button type="submit" class="btn">Guardar</button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

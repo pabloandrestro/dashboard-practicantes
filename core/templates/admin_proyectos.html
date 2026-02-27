@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+  /* Contenedor principal */
+  .page-wrap{
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 40px 40px;
+    box-sizing: border-box;
+  }
+
+  /* Header con título y buscador */
+  .header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:20px;
+    margin-bottom: 18px;
+  }
+
+  .header h1{
+    margin:0;
+    font-size:48px;
+  }
+
+  /* Lado derecho del header */
+  .header-right{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:12px;
+    min-width:460px;
+  }
+
+  /* Buscador */
+  .search-box{
+    display:flex;
+    gap:10px;
+    width:460px;
+  }
+
+  .search-box input{
+    flex:1;
+    padding:10px 14px;
+    border-radius:14px;
+    border:none;
+    background:#f2f2f2;
+    font-size:14px;
+    outline:none;
+  }
+
+  .search-box button{
+    background:#14b8d4;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:14px;
+    font-weight:700;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .search-box button:hover{ filter:brightness(0.95); }
+
+  /* Link completo de la tarjeta */
+  .card-link{
+    text-decoration:none;
+    color: inherit;
+    display:block;
+  }
+
+  /* Tarjeta de proyecto */
+  .card{
+    border: 2px solid #2c2c2c;
+    border-radius: 18px;
+    padding: 18px 22px;
+    display:grid;
+    grid-template-columns: 170px 1fr 220px;
+    gap: 22px;
+    align-items:center;
+    margin: 22px 0;
+    transition: transform 0.05s ease-in-out, box-shadow 0.05s ease-in-out;
+    background:#fff;
+  }
+
+  .card:hover{
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  }
+
+  /* Imagen miniatura */
+  .thumb{
+    width: 160px;
+    height: 120px;
+    border-radius: 18px;
+    object-fit: cover;
+    background:#eee;
+  }
+
+  /* Información del proyecto */
+  .info{
+    display:flex;
+    flex-direction:column;
+    gap: 6px;
+  }
+
+  .title{
+    font-size: 26px;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .meta{
+    font-size: 18px;
+    margin: 0;
+  }
+
+  /* Contenedor del badge */
+  .badge-wrap{
+    display:flex;
+    justify-content:flex-end;
+    align-items:flex-start;
+  }
+
+  /* Badge de estado */
+  .badge{
+    padding: 12px 26px;
+    border-radius: 999px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+    min-width: 160px;
+    text-align:center;
+  }
+
+  .badge.activo{ background:#7bd84f; }
+  .badge.pausado{ background:#ffd84d; color:#ffffff; }
+  .badge.terminado{ background:#1f56ff; }
+
+  /* Texto cuando no hay proyectos */
+  .empty{
+    margin-top: 30px;
+    font-size: 18px;
+    opacity: 0.7;
+  }
+
+  /* Responsive */
+  @media (max-width: 1100px){
+    .card{
+      grid-template-columns: 140px 1fr;
+      grid-template-rows: auto auto;
+    }
+    .badge-wrap{ justify-content:flex-start; grid-column: 2 / 3; }
+  }
+
+  @media (max-width: 900px){
+    .header{ flex-direction:column; align-items:stretch; }
+    .header-right{ align-items:stretch; min-width:auto; }
+    .search-box{ width:100%; }
+  }
+
+  @media (max-width: 750px){
+    .page-wrap{ padding: 10px 18px 30px; }
+    .card{ grid-template-columns: 1fr; }
+    .thumb{ width: 100%; height: 180px; }
+    .badge-wrap{ justify-content:flex-start; }
+  }
+</style>
+
+<div class="page-wrap">
+
+  <div class="header">
+    <h1>Proyectos</h1>
+
+    <div class="header-right">
+
+      <!-- Buscador de proyectos -->
+      <form method="GET" class="search-box">
+        <input
+          type="text"
+          name="q"
+          placeholder="Buscar proyecto..."
+          value="{{ request.GET.q }}"
+        >
+        <button type="submit">Buscar</button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Listado de proyectos -->
+  {% if proyectos and proyectos|length > 0 %}
+    {% for p in proyectos %}
+      <a class="card-link" href="{% url 'admin_proyecto_detalle' p.id %}">
+
+        <div class="card">
+
+          <!-- Imagen del proyecto -->
+          <div>
+            {% if p.imagen %}
+              <img class="thumb" src="{{ p.imagen.url }}" alt="Imagen proyecto">
+            {% else %}
+              <img class="thumb" src="{% static 'images/proyectos/default.png' %}" alt="Imagen proyecto">
+            {% endif %}
+          </div>
+
+          <!-- Información -->
+          <div class="info">
+            <h2 class="title">{{ p.nombre }}</h2>
+            <p class="meta">Inicio: {{ p.fecha_inicio|date:"d-m-Y" }}</p>
+            <p class="meta">Célula: {{ p.numero_celula }}</p>
+            <p class="meta">Avance: {{ p.porcentaje_avance }}%</p>
+          </div>
+
+          <!-- Estado -->
+          <div class="badge-wrap">
+            {% if p.estado|lower == "activo" %}
+              <div class="badge activo">Activo</div>
+            {% elif p.estado|lower == "pausado" %}
+              <div class="badge pausado">Pausado</div>
+            {% else %}
+              <div class="badge terminado">Terminado</div>
+            {% endif %}
+          </div>
+
+        </div>
+
+      </a>
+    {% endfor %}
+  {% else %}
+
+    <!-- Mensaje cuando no hay proyectos -->
+    <div class="empty">No hay proyectos registrados todavía.</div>
+
+  {% endif %}
+
+</div>
+
+{% endblock %}

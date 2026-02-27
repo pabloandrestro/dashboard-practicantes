@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  /* Contenedor principal:
+     - Limito el ancho máximo para que el contenido no se estire demasiado.
+     - Centro el contenido con margin auto.
+     - Agrego padding para separar del borde de la pantalla. */
+  .wrap{
+    max-width:1200px;
+    margin:0 auto;
+    padding:30px 40px;
+  }
+
+  /* Encabezado superior:
+     - Uso flex para alinear título a la izquierda y búsqueda a la derecha.
+     - gap separa elementos y margin-bottom da aire hacia el contenido. */
+  .header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:20px;
+    margin-bottom:18px;
+  }
+
+  /* Estilo del título principal "Horas". */
+  .header h1{
+    margin:0;
+    font-size:48px;
+  }
+
+  /* Lado derecho del header:
+     - Ordeno elementos en columna.
+     - Alineo a la derecha (flex-end).
+     - Reservo un ancho mínimo para que el buscador quede consistente. */
+  .header-right{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:12px;
+    min-width:460px;
+  }
+
+  /* Contenedor del buscador:
+     - Lo hago flex para dejar input y botón en una misma fila.
+     - Fijo el ancho para que sea consistente con el min-width del header-right. */
+  .search-box{
+    display:flex;
+    gap:10px;
+    width:460px;
+  }
+
+  /* Input del buscador:
+     - flex:1 hace que el input tome todo el espacio disponible.
+     - background gris suave y bordes redondeados. */
+  .search-box input{
+    flex:1;
+    padding:10px 14px;
+    border-radius:14px;
+    border:none;
+    background:#f2f2f2;
+    font-size:14px;
+    outline:none;
+  }
+
+  /* Botón del buscador:
+     - Color principal celeste.
+     - Sin borde, con esquinas redondeadas.
+     - cursor pointer para indicar clickeable. */
+  .search-box button{
+    background:#14b8d4;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:14px;
+    font-weight:700;
+    cursor:pointer;
+  }
+
+  /* Tarjetas de estadísticas:
+     - Grid de 3 columnas para: activos, horas semana, horas totales. */
+  .stats{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:16px;
+    margin: 10px 0 18px;
+  }
+
+  /* Estilo de cada tarjeta de estadística:
+     - Borde negro, fondo blanco y padding interno. */
+  .stat{
+    border:2px solid #111;
+    border-radius:18px;
+    background:#fff;
+    padding:16px 18px;
+  }
+
+  /* Etiqueta pequeña dentro de cada tarjeta (ej: "Practicantes activos"). */
+  .stat .label{
+    font-size:14px;
+    opacity:0.75;
+  }
+
+  /* Valor grande dentro de cada tarjeta (ej: "12"). */
+  .stat .value{
+    font-size:34px;
+    font-weight:800;
+  }
+
+  /* Tabla principal:
+     - border-collapse separada para poder usar border-radius con overflow hidden.
+     - background blanco para que contraste con el fondo general. */
+  table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0;
+    background:#fff;
+    border-radius:16px;
+    overflow:hidden;
+  }
+
+  /* Encabezado de tabla:
+     - Fondo celeste y texto blanco para destacar columnas. */
+  thead th{
+    background:#14b8d4;
+    color:#fff;
+    padding:14px;
+    text-align:left;
+  }
+
+  /* Celdas del cuerpo:
+     - Padding y separador inferior para filas. */
+  td{
+    padding:12px 14px;
+    border-bottom:1px solid #eee;
+  }
+
+  /* Texto auxiliar al final con menor opacidad. */
+  .muted{
+    margin-top:10px;
+    opacity:0.7;
+  }
+</style>
+
+<div class="wrap">
+
+  <div class="header">
+    <h1>Horas</h1>
+
+    <div class="header-right">
+
+      <!-- Buscador por GET:
+           - Envío ?q=... para filtrar practicantes desde la vista admin_horas.
+           - Mantengo el valor actual en el input usando request.GET.q. -->
+      <form method="GET" class="search-box">
+        <input type="text" name="q" placeholder="Buscar practicante..." value="{{ request.GET.q }}">
+        <button type="submit">Buscar</button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Bloque de estadísticas:
+       - practicantes_activos: total de practicantes activos
+       - horas_semana: total de horas desde lunes hasta hoy
+       - horas_totales: total acumulado general -->
+  <div class="stats">
+    <div class="stat">
+      <div class="label">Practicantes activos</div>
+      <div class="value">{{ practicantes_activos }}</div>
+    </div>
+
+    <div class="stat">
+      <div class="label">Horas esta semana</div>
+      <div class="value">{{ horas_semana }}</div>
+    </div>
+
+    <div class="stat">
+      <div class="label">Horas totales</div>
+      <div class="value">{{ horas_totales }}</div>
+    </div>
+  </div>
+
+  <!-- Tabla de practicantes:
+       - filas viene desde la vista admin_horas como lista de dicts
+         (user_id, nombre, horas_requeridas, horas_registradas, pct_label). -->
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Practicante</th>
+        <th>Horas requeridas</th>
+        <th>Horas registradas</th>
+        <th>% completado</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for f in filas %}
+      <tr>
+        <td>
+          <!-- Link al perfil del practicante:
+               - Agrego next para poder volver a esta vista -->
+          <a href="{% url 'admin_practicante_perfil' f.user_id %}?next={% url 'admin_horas' %}"
+             style="text-decoration:none;color:inherit;font-weight:700;">
+            {{ f.nombre }}
+          </a>
+        </td>
+
+        <!-- Datos numéricos/estado del practicante -->
+        <td>{{ f.horas_requeridas }}</td>
+        <td>{{ f.horas_registradas }}</td>
+        <td>{{ f.pct_label }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="4">No hay practicantes activos para mostrar.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Nota informativa del cálculo -->
+  <div class="muted">
+    * Horas semana = lunes a hoy
+  </div>
+
+</div>
+
+{% endblock %}

@@ -2,9 +2,37 @@
 {% load static %}
 {% block content %}
 <style>
-  .wrap{ max-width: 800px; margin: 0 auto; padding: 20px 40px; }
-  .box{ border: 2px solid #2c2c2c; border-radius: 18px; padding: 18px 22px; }
-  label{ display:block; margin-top: 12px; font-weight: 600; }
+  /* Contenedor principal:
+     - max-width limita el ancho del contenido
+     - centrado con margin auto
+     - padding para separar de los bordes */
+  .wrap{
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px 40px;
+  }
+
+  /* Caja tipo tarjeta:
+     - borde para destacar el formulario
+     - border-radius para esquinas redondeadas
+     - padding interno */
+  .box{
+    border: 2px solid #2c2c2c;
+    border-radius: 18px;
+    padding: 18px 22px;
+  }
+
+  /* Labels de los campos del form */
+  label{
+    display:block;
+    margin-top: 12px;
+    font-weight: 600;
+  }
+
+  /* Inputs del formulario:
+     - width 100% para ocupar toda la caja
+     - padding para comodidad
+     - borde suave para consistencia */
   input{
     width: 100%;
     padding: 12px 14px;
@@ -12,23 +40,45 @@
     border: 1px solid rgba(0,0,0,0.15);
     font-size: 16px;
   }
+
+  /* Botón principal */
   .btn{
     margin-top: 16px;
-    background:#14b8d4; color:#fff; border:none; cursor:pointer;
-    padding: 12px 22px; border-radius: 12px; font-weight: 600;
+    background:#14b8d4;
+    color:#fff;
+    border:none;
+    cursor:pointer;
+    padding: 12px 22px;
+    border-radius: 12px;
+    font-weight: 600;
     font-size: 16px;
   }
 </style>
 
 <div class="wrap">
-  <h1 style="margin:0 0 14px;">Cambiar foto — {{ proyecto.nombre }}</h1>
+
+  <!-- Título de la vista:
+       - muestro el nombre del proyecto para que el usuario sepa cuál está editando -->
+  <h1 style="margin:0 0 14px;">
+    Cambiar foto — {{ proyecto.nombre }}
+  </h1>
 
   <div class="box">
+
+    <!-- Formulario:
+         - POST para enviar la nueva imagen al backend
+         - multipart/form-data obligatorio para subir archivos
+         - csrf_token requerido por Django -->
     <form method="POST" enctype="multipart/form-data">
       {% csrf_token %}
+
+      <!-- Renderizo el formulario Django completo en formato párrafos -->
       {{ form.as_p }}
+
+      <!-- Acción principal: guardar imagen -->
       <button class="btn" type="submit">Guardar foto</button>
     </form>
+
   </div>
 </div>
 {% endblock %}

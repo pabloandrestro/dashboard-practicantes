@@ -3,6 +3,10 @@
 
 {% block content %}
 <style>
+  /* Contenedor principal del perfil:
+     - ancho máximo amplio para esta vista
+     - centrado horizontal
+     - padding lateral */
   .perfil-wrap{
     width: 100%;
     max-width: 1400px;
@@ -11,6 +15,9 @@
     box-sizing: border-box;
   }
 
+  /* Header del perfil:
+     - contiene avatar + saludo (izquierda)
+     - y botones (derecha) */
   .perfil-header{
     display:flex;
     align-items:center;
@@ -19,12 +26,14 @@
     margin-bottom: 30px;
   }
 
+  /* Bloque izquierdo (foto + saludo) */
   .perfil-left{
     display:flex;
     align-items:center;
     gap: 22px;
   }
 
+  /* Avatar de perfil */
   .avatar{
     width:120px;
     height:120px;
@@ -33,7 +42,7 @@
     background:#eee;
   }
 
-  /* 🔹 SALUDO MÁS PEQUEÑO */
+  /* Saludo principal */
   .saludo{
     font-size: 40px;
     font-weight: 500;
@@ -41,13 +50,14 @@
     line-height: 1.1;
   }
 
+  /* Contenedor de botones */
   .btns{
     display:flex;
     gap: 18px;
     align-items:center;
   }
 
-  /* 🔹 BOTONES MÁS PEQUEÑOS */
+  /* Botón principal */
   .btn{
     background:#14b8d4;
     color:white;
@@ -63,12 +73,14 @@
     filter: brightness(0.95);
   }
 
-  /* TABLA PERFIL */
+  /* ================= TABLA DE DATOS ================= */
+
   .perfil-table{
     width: 100%;
     margin-top: 10px;
   }
 
+  /* Fila tipo grid: label izquierda + valor derecha */
   .row{
     display: grid;
     grid-template-columns: 300px 1fr;
@@ -78,26 +90,23 @@
     margin: 16px 0;
   }
 
-  /* 🔹 LABELS MÁS PEQUEÑOS */
+  /* Texto label */
   .label{
     font-size: 22px;
     font-weight: 500;
   }
 
-  /* 🔹 CAJAS MÁS FINAS */
+  /* Caja de valor */
   .val{
     width: 100%;
     box-sizing: border-box;
-
     background: #f2f2f2;
     border-radius: 16px;
     padding: 14px 20px;
     height: 60px;
-
     display: flex;
     align-items: center;
     justify-content: flex-end;
-
     font-size: 16px;
   }
 
@@ -112,26 +121,33 @@
 
 <div class="perfil-wrap">
 
+  <!-- ================= HEADER ================= -->
   <div class="perfil-header">
     <div class="perfil-left">
 
+      <!-- Foto de perfil o avatar por defecto -->
       {% if practicante.foto_perfil %}
         <img class="avatar" src="{{ practicante.foto_perfil.url }}" alt="Foto perfil">
       {% else %}
         <img class="avatar" src="{% static 'images/default-avatar.png' %}" alt="Foto perfil">
       {% endif %}
 
+      <!-- Saludo con nombre completo -->
       <h1 class="saludo">
         Hola {{ request.user.first_name }} {{ request.user.last_name }}!
       </h1>
 
     </div>
 
+    <!-- Botones acciones perfil -->
     <div class="btns">
+
+      <!-- Botón editar perfil -->
       <a href="{% url 'perfil_editar' %}">
         <button class="btn">Editar</button>
       </a>
 
+      <!-- Botón cerrar sesión -->
       <form method="POST" action="{% url 'logout' %}" style="margin:0;">
         {% csrf_token %}
         <button class="btn" type="submit">Cerrar sesión</button>
@@ -139,6 +155,7 @@
     </div>
   </div>
 
+  <!-- ================= TABLA DE DATOS ================= -->
   <div class="perfil-table">
 
     <div class="row">

@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+  /* Contenedor principal:
+     - max-width para limitar ancho
+     - centrado con margin auto
+     - padding para separación del borde */
+  .wrap{
+    width:100%;
+    max-width:1200px;
+    margin:0 auto;
+    padding:20px 40px 40px;
+    box-sizing:border-box;
+  }
+
+  /* Header general (no el contenedor actual, pero lo dejo por si se usa en base):
+     - flex para alinear elementos */
+  .header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:20px;
+    margin-bottom:18px;
+  }
+
+  /* IMPORTANTE:
+     Eliminé ".header h1" porque estaba duplicado/contradictorio.
+     En este template el título se controla con ".wrap .header-left h1". */
+
+  /* Contenedor derecho (buscador) */
+  .header-right{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:12px;
+    min-width:460px;
+  }
+
+  /* Buscador */
+  .search-box{
+    display:flex;
+    gap:10px;
+    width:460px;
+  }
+
+  .search-box input{
+    flex:1;
+    padding:10px 14px;
+    border-radius:14px;
+    border:none;
+    background:#f2f2f2;
+    font-size:14px;
+    outline:none;
+  }
+
+  .search-box button{
+    background:#14b8d4;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:14px;
+    font-weight:700;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .search-box button:hover{ filter:brightness(0.95); }
+
+  /* Tarjeta de reporte:
+     - borde, fondo blanco y padding
+     - flex para separar contenido (izquierda) y acción (derecha) */
+  .card{
+    border:2px solid #111;
+    border-radius:18px;
+    background:#fff;
+    padding:18px 22px;
+    margin:18px 0;
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+    align-items:flex-start;
+  }
+
+  /* Columna izquierda: info del reporte */
+  .left{
+    flex:1;
+    min-width:0;
+  }
+
+  /* Título del card: nombre del proyecto */
+  .title{
+    margin:0;
+    font-size:22px;
+    font-weight:900;
+  }
+
+  /* Meta: autor + username + fecha */
+  .meta{
+    margin-top:6px;
+    font-size:14px;
+    opacity:0.8;
+  }
+
+  /* Descripción del reporte:
+     - pre-wrap respeta saltos de línea
+     - word-break evita desbordes */
+  .desc{
+    margin-top:10px;
+    font-size:15px;
+    line-height:1.5;
+    white-space:pre-wrap;
+    word-break:break-word;
+  }
+
+  /* Columna derecha: botón para ver el proyecto */
+  .right{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    align-items:flex-end;
+    min-width:160px;
+  }
+
+  /* Botón */
+  .btn{
+    background:#14b8d4;
+    color:#fff;
+    border:none;
+    padding:10px 16px;
+    border-radius:12px;
+    font-weight:800;
+    text-decoration:none;
+    display:inline-block;
+    white-space:nowrap;
+    cursor:pointer;
+  }
+  .btn:hover{ filter:brightness(0.95); }
+
+  /* Estado vacío cuando no hay reportes */
+  .empty{
+    margin-top:26px;
+    opacity:0.75;
+  }
+
+  /* Subtítulo bajo el título principal */
+  .subtitle{
+    margin-top:6px;
+    font-size:16px;
+    color:#555;
+    font-weight:500;
+  }
+
+  /* Header-left:
+     - Dejo el título y subtítulo en columna */
+  .header-left{
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* Título principal (este es el que realmente se usa) */
+  .wrap .header-left h1{
+    font-size: 48px !important;
+    font-weight: 900 !important;
+    margin: 0 !important;
+    line-height: 1.05 !important;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px){
+    .header{ flex-direction:column; align-items:stretch; }
+    .header-right{ align-items:stretch; min-width:auto; }
+    .search-box{ width:100%; }
+
+    .card{ flex-direction:column; }
+    .right{ align-items:flex-start; }
+  }
+</style>
+
+<div class="wrap">
+
+  <div class="header-left">
+    <h1>Reportes</h1>
+    <div class="subtitle">Últimos reportes:</div>
+
+    <div class="header-right">
+      <!-- Buscador por GET: filtra por texto en reporte/proyecto/practicante -->
+      <form method="GET" class="search-box">
+        <input
+          type="text"
+          name="q"
+          placeholder="Buscar reporte, proyecto o practicante..."
+          value="{{ request.GET.q }}"
+        >
+        <button type="submit">Buscar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Listado de reportes -->
+  {% for r in reportes %}
+    <div class="card">
+      <div class="left">
+        <!-- Nombre del proyecto asociado al reporte -->
+        <h2 class="title">{{ r.proyecto.nombre }}</h2>
+
+        <!-- Autor del reporte + fecha -->
+        <div class="meta">
+          <b>{{ r.usuario.first_name }} {{ r.usuario.last_name }}</b>
+          <span style="opacity:0.8;">(@{{ r.usuario.username }})</span>
+          ·
+          {% if r.fecha %}
+            {{ r.fecha|date:"d-m-Y" }}
+          {% else %}
+            (sin fecha)
+          {% endif %}
+        </div>
+
+        <!-- Descripción del reporte -->
+        <div class="desc">{{ r.descripcion }}</div>
+      </div>
+
+      <div class="right">
+        <!-- Link al detalle del proyecto dentro del panel -->
+        <a class="btn" href="{% url 'admin_proyecto_detalle' r.proyecto.id %}">Ver proyecto</a>
+      </div>
+    </div>
+
+  {% empty %}
+    <!-- Estado vacío -->
+    <div class="empty">No hay reportes todavía.</div>
+  {% endfor %}
+
+</div>
+{% endblock %}

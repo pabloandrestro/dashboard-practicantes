@@ -4,6 +4,9 @@
 {% block content %}
 
 <style>
+/* Contenedor principal del login:
+   - min-height para centrar verticalmente en pantalla
+   - flexbox para centrar horizontal y verticalmente */
 .login-wrap{
   min-height:80vh;
   display:flex;
@@ -11,6 +14,11 @@
   align-items:center;
 }
 
+/* Tarjeta de login:
+   - fondo blanco
+   - bordes redondeados
+   - padding interno amplio
+   - sombra para destacar sobre el fondo */
 .login-card{
   background:white;
   border-radius:20px;
@@ -21,15 +29,18 @@
   text-align:center;
 }
 
+/* Logo del login */
 .login-logo{
   width:140px;
   margin-bottom:25px;
 }
 
+/* Título */
 .login-card h2{
   margin-bottom:20px;
 }
 
+/* Contenedor de cada campo (label + input) */
 .campo{
   display:flex;
   flex-direction:column;
@@ -37,11 +48,13 @@
   margin-bottom:15px;
 }
 
+/* Etiqueta del campo */
 .campo label{
   margin-bottom:6px;
   font-weight:500;
 }
 
+/* Input de usuario/contraseña */
 .campo input{
   padding:12px 14px;
   border-radius:12px;
@@ -50,6 +63,7 @@
   font-size:15px;
 }
 
+/* Botón de login */
 .btn-login{
   margin-top:15px;
   width:100%;
@@ -63,10 +77,12 @@
   cursor:pointer;
 }
 
+/* Hover botón login */
 .btn-login:hover{
   filter:brightness(0.95);
 }
 
+/* Mensaje de error */
 .error{
   color:red;
   font-size:14px;
@@ -78,30 +94,39 @@
 
   <div class="login-card">
 
-    <!-- LOGO -->
+    <!-- LOGO DEL SISTEMA EN LOGIN -->
     <img src="{% static 'images/logo-login.png' %}" class="login-logo">
 
+    <!-- TÍTULO -->
     <h2>Iniciar sesión</h2>
 
+    <!-- FORMULARIO DE LOGIN:
+         - POST porque envía credenciales
+         - csrf_token obligatorio en Django -->
     <form method="POST">
       {% csrf_token %}
 
+      <!-- MENSAJE DE ERROR:
+           - se muestra si el formulario tiene errores (credenciales incorrectas) -->
       {% if form.errors %}
         <div class="error">
           Usuario o contraseña incorrectos
         </div>
       {% endif %}
 
+      <!-- CAMPO USUARIO -->
       <div class="campo">
         <label for="id_username">Usuario</label>
         {{ form.username }}
       </div>
 
+      <!-- CAMPO CONTRASEÑA -->
       <div class="campo">
         <label for="id_password">Contraseña</label>
         {{ form.password }}
       </div>
 
+      <!-- BOTÓN SUBMIT -->
       <button type="submit" class="btn-login">
         Ingresar
       </button>

@@ -2,6 +2,10 @@
 {% block content %}
 
 <style>
+  /* Contenedor principal del formulario:
+     - max-width para que no se estire demasiado
+     - centrado con margin auto
+     - padding para separar del borde */
   .form-wrap{
     width: 100%;
     max-width: 900px;
@@ -10,16 +14,21 @@
     box-sizing: border-box;
   }
 
+  /* Título principal de la vista */
   .form-wrap h1{
     font-size: 44px;
     font-weight: 600;
     margin: 0 0 25px 0;
   }
 
+  /* Bloque de cada campo del formulario */
   .field{
     margin: 18px 0;
   }
 
+  /* Estilo base de los labels:
+     - display block para que estén arriba del input
+     - tipografía más grande para legibilidad */
   .field label{
     display:block;
     font-size: 20px;
@@ -27,6 +36,10 @@
     margin-bottom: 10px;
   }
 
+  /* Inputs, selects y textareas:
+     - ancho completo
+     - fondo gris suave
+     - bordes redondeados */
   .field input,
   .field select,
   .field textarea{
@@ -40,17 +53,23 @@
     font-size: 16px;
   }
 
+  /* Textarea:
+     - alto mínimo para escribir cómodamente
+     - resize vertical para permitir agrandar hacia abajo */
   .field textarea{
     min-height: 120px;
     resize: vertical;
   }
 
+  /* Contenedor de acciones:
+     - alinea el botón a la derecha */
   .actions{
     margin-top: 28px;
     display:flex;
     justify-content:flex-end;
   }
 
+  /* Botón principal */
   .btn{
     background:#14b8d4;
     color:white;
@@ -61,55 +80,69 @@
     font-weight: 600;
     font-size: 16px;
   }
+
+  /* Hover del botón */
   .btn:hover{ filter: brightness(0.95); }
 </style>
 
 <div class="form-wrap">
   <h1>Crear proyecto</h1>
 
+  <!-- Formulario:
+       - POST porque estoy creando un proyecto
+       - enctype multipart para permitir subir la imagen del proyecto -->
   <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
 
+    <!-- Campo: nombre del proyecto -->
     <div class="field">
       {{ form.nombre.label_tag }}
       {{ form.nombre }}
     </div>
 
+    <!-- Campo: descripción del proyecto -->
     <div class="field">
       {{ form.descripcion.label_tag }}
       {{ form.descripcion }}
     </div>
 
+    <!-- Campo: número de célula / equipo -->
     <div class="field">
       {{ form.numero_celula.label_tag }}
       {{ form.numero_celula }}
     </div>
 
+    <!-- Campo: estado del proyecto (activo/pausado/terminado, etc.) -->
     <div class="field">
       {{ form.estado.label_tag }}
       {{ form.estado }}
     </div>
 
+    <!-- Campo: fecha de inicio -->
     <div class="field">
       {{ form.fecha_inicio.label_tag }}
       {{ form.fecha_inicio }}
     </div>
 
+    <!-- Campo: fecha de término (opcional dependiendo del modelo) -->
     <div class="field">
       {{ form.fecha_termino.label_tag }}
       {{ form.fecha_termino }}
     </div>
 
+    <!-- Campo: porcentaje de avance -->
     <div class="field">
       {{ form.porcentaje_avance.label_tag }}
       {{ form.porcentaje_avance }}
     </div>
 
+    <!-- Campo: imagen del proyecto -->
     <div class="field">
       {{ form.imagen.label_tag }}
       {{ form.imagen }}
     </div>
 
+    <!-- Acción principal: guardar -->
     <div class="actions">
       <button type="submit" class="btn">Guardar proyecto</button>
     </div>

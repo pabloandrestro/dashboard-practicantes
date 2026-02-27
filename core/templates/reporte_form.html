@@ -4,33 +4,48 @@
 {% block content %}
 
 <style>
+  /* Contenedor principal del formulario:
+     - max-width para que no se estire demasiado
+     - centrado con margin auto
+     - padding para separar del borde */
   .form-wrap{
     max-width:900px;
     margin:0 auto;
     padding:30px 40px;
   }
 
+  /* Título principal de la vista */
   h2{
     margin-bottom:25px;
   }
 
+  /* Grid del formulario:
+     - 2 columnas para escritorio
+     - gap para separación entre campos */
   .form-grid{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:20px;
   }
 
+  /* Contenedor de cada campo (label + input/textarea) */
   .campo{
     display:flex;
     flex-direction:column;
   }
 
+  /* Estilo base de labels */
   .campo label{
     font-size:18px;
     margin-bottom:6px;
     font-weight:500;
   }
 
+  /* Inputs y textareas:
+     - width 100% para ocupar la columna
+     - background gris suave
+     - sin borde visible (border none)
+     - padding para comodidad */
   .campo input,
   .campo textarea{
     width:100%;
@@ -44,15 +59,20 @@
     font-size:15px;
   }
 
+  /* Textarea:
+     - resize vertical para permitir agrandar hacia abajo
+     - min-height para escribir cómodo */
   .campo textarea{
     resize:vertical;
     min-height:100px;
   }
 
+  /* Campo que ocupa ambas columnas */
   .campo-full{
     grid-column:1 / -1;
   }
 
+  /* Botón principal */
   .btn-guardar{
     margin-top:25px;
     background:#14b8d4;
@@ -65,6 +85,7 @@
     cursor:pointer;
   }
 
+  /* Hover del botón */
   .btn-guardar:hover{
     filter:brightness(0.95);
   }
@@ -72,32 +93,43 @@
 
 <div class="form-wrap">
 
+  <!-- Título de la sección -->
   <h2>Nuevo reporte de avance</h2>
 
+  <!-- Formulario:
+       - POST porque envío datos al backend para crear un reporte
+       - csrf_token requerido por Django -->
   <form method="POST">
     {% csrf_token %}
 
+    <!-- Grid con los campos del formulario -->
     <div class="form-grid">
 
-      <!-- FECHA -->
+      <!-- FECHA:
+           - Campo fecha del reporte -->
       <div class="campo">
         {{ form.fecha.label_tag }}
         {{ form.fecha }}
       </div>
 
-      <!-- PORCENTAJE -->
+      <!-- PORCENTAJE:
+           - Porcentaje de avance reportado -->
       <div class="campo">
         {{ form.porcentaje_avance.label_tag }}
         {{ form.porcentaje_avance }}
       </div>
 
-      <!-- DESCRIPCION -->
+      <!-- DESCRIPCION:
+           - Texto libre con el detalle del avance.
+           - campo-full porque debe ocupar el ancho completo -->
       <div class="campo campo-full">
         {{ form.descripcion.label_tag }}
         {{ form.descripcion }}
       </div>
 
-      <!-- 🔥 NUEVO ESTADO DEL PROYECTO -->
+      <!-- ESTADO:
+           - Estado del proyecto asociado al reporte (si tu form lo incluye).
+           - campo-full para ocupar el ancho completo -->
       <div class="campo campo-full">
         {{ form.estado.label_tag }}
         {{ form.estado }}
@@ -105,6 +137,7 @@
 
     </div>
 
+    <!-- Acción principal: guardar el reporte -->
     <button type="submit" class="btn-guardar">
       Guardar reporte
     </button>
