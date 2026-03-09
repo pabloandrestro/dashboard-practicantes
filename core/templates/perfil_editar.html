@@ -1,140 +1,181 @@
 {% extends "base.html" %}
-{% load static %}
+
 
 {% block content %}
 
 <style>
-/* Contenedor principal del login:
-   - min-height para centrar verticalmente en pantalla
-   - flexbox para centrar horizontal y verticalmente */
-.login-wrap{
-  min-height:80vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
+  /* Contenedor general:
+     - max-width para que el formulario no quede demasiado ancho.
+     - margin auto para centrar.
+     - padding para separar del borde.
+     - box-sizing para que padding no rompa el ancho calculado. */
+  .wrap{ max-width:900px; margin:0 auto; padding:30px 40px; box-sizing:border-box; }
 
-/* Tarjeta de login:
-   - fondo blanco
-   - bordes redondeados
-   - padding interno amplio
-   - sombra para destacar sobre el fondo */
-.login-card{
-  background:white;
-  border-radius:20px;
-  padding:40px 50px;
-  width:100%;
-  max-width:400px;
-  box-shadow:0 8px 25px rgba(0,0,0,0.1);
-  text-align:center;
-}
+  /* Barra superior:
+     - flex para alinear título y botón "Volver" en una misma fila.
+     - justify-content space-between separa izquierda/derecha.
+     - gap para separación visual.
+     - margin-bottom para dar espacio hacia el formulario. */
+  .top{ display:flex; justify-content:space-between; align-items:center; gap:14px; margin-bottom:18px; }
 
-/* Logo del login */
-.login-logo{
-  width:140px;
-  margin-bottom:25px;
-}
+  /* Estilo del título principal. */
+  .top h1{ margin:0; font-size:46px; font-weight:900; }
 
-/* Título */
-.login-card h2{
-  margin-bottom:20px;
-}
+  /* Botón base:
+     - color principal celeste
+     - tipografía fuerte
+     - bordes redondeados
+     - cursor pointer para indicar clickeable */
+  .btn{ background:#14b8d4; color:#fff; border:none; padding:10px 16px; border-radius:12px; font-weight:800; text-decoration:none; display:inline-block; cursor:pointer; }
 
-/* Contenedor de cada campo (label + input) */
-.campo{
-  display:flex;
-  flex-direction:column;
-  text-align:left;
-  margin-bottom:15px;
-}
+  /* Hover del botón:
+     - bajo un poco el brillo para dar feedback al usuario. */
+  .btn:hover{ filter:brightness(0.95); }
 
-/* Etiqueta del campo */
-.campo label{
-  margin-bottom:6px;
-  font-weight:500;
-}
+  /* Variante "ghost":
+     - botón gris claro para acciones secundarias (volver/cancelar). */
+  .btn-ghost{ background:#f2f2f2; color:#111; }
 
-/* Input de usuario/contraseña */
-.campo input{
-  padding:12px 14px;
-  border-radius:12px;
-  border:none;
-  background:#f2f2f2;
-  font-size:15px;
-}
+  /* Tarjeta contenedora del formulario:
+     - borde negro grueso
+     - esquinas redondeadas
+     - fondo blanco
+     - padding interno */
+  .card{ border:2px solid #111; border-radius:18px; background:#fff; padding:18px; }
 
-/* Botón de login */
-.btn-login{
-  margin-top:15px;
-  width:100%;
-  background:#14b8d4;
-  color:white;
-  border:none;
-  padding:12px;
-  border-radius:12px;
-  font-weight:600;
-  font-size:15px;
-  cursor:pointer;
-}
+  /* Grid del formulario:
+     - 2 columnas en desktop
+     - gap para separación entre inputs */
+  .grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
 
-/* Hover botón login */
-.btn-login:hover{
-  filter:brightness(0.95);
-}
+  /* Etiquetas:
+     - negrita para claridad
+     - margen inferior para separar del input */
+  label{ font-weight:800; font-size:14px; display:block; margin-bottom:6px; }
 
-/* Mensaje de error */
-.error{
-  color:red;
-  font-size:14px;
-  margin-bottom:10px;
-}
+  /* Inputs:
+     - ancho completo
+     - padding
+     - borde suave
+     - box-sizing para que el ancho sea consistente */
+  input{ width:100%; padding:10px 12px; border-radius:12px; border:1px solid #ddd; box-sizing:border-box; }
+
+  /* Cada fila del grid:
+     - margen inferior para separar visualmente los grupos */
+  .row{ margin-bottom:12px; }
+
+  /* Elementos que deben ocupar todo el ancho del grid (ambas columnas). */
+  .row-full{ grid-column:1 / -1; }
+
+  /* Título de sección (por ejemplo, "Cambiar contraseña"). */
+  .section-title{ margin:12px 0 8px; font-size:16px; font-weight:900; }
+
+  /* Texto de ayuda bajo un campo. */
+  .hint{ font-size:13px; opacity:.75; margin-top:6px; }
+
+  /* Contenedor de acciones:
+     - alineo botones a la derecha
+     - permito que bajen de línea si falta espacio */
+  .actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:14px; flex-wrap:wrap; }
+
+  /* Mensaje de error:
+     - fondo rojo claro y texto rojo oscuro
+     - padding y borde redondeado */
+  .error{ margin-bottom:12px; padding:10px 12px; border-radius:12px; background:#fee2e2; color:#7f1d1d; font-weight:800; }
+
+  /* Responsive:
+     - reduzco padding
+     - paso a 1 columna
+     - reduzco tamaño del título para pantallas menores */
+  @media (max-width: 900px){
+    .wrap{ padding:18px; }
+    .grid{ grid-template-columns:1fr; }
+    .top h1{ font-size:38px; }
+  }
 </style>
 
-<div class="login-wrap">
+<div class="wrap">
+  <div class="top">
+    <h1>Editar perfil</h1>
 
-  <div class="login-card">
-
-    <!-- LOGO DEL SISTEMA EN LOGIN -->
-    <img src="{% static 'images/logo-login.png' %}" class="login-logo">
-
-    <!-- TÍTULO -->
-    <h2>Iniciar sesión</h2>
-
-    <!-- FORMULARIO DE LOGIN:
-         - POST porque envía credenciales
-         - csrf_token obligatorio en Django -->
-    <form method="POST">
-      {% csrf_token %}
-
-      <!-- MENSAJE DE ERROR:
-           - se muestra si el formulario tiene errores (credenciales incorrectas) -->
-      {% if form.errors %}
-        <div class="error">
-          Usuario o contraseña incorrectos
-        </div>
-      {% endif %}
-
-      <!-- CAMPO USUARIO -->
-      <div class="campo">
-        <label for="id_username">Usuario</label>
-        {{ form.username }}
-      </div>
-
-      <!-- CAMPO CONTRASEÑA -->
-      <div class="campo">
-        <label for="id_password">Contraseña</label>
-        {{ form.password }}
-      </div>
-
-      <!-- BOTÓN SUBMIT -->
-      <button type="submit" class="btn-login">
-        Ingresar
-      </button>
-
-    </form>
-
+    <!-- Botón para volver a la vista del perfil del practicante -->
+    <a class="btn btn-ghost" href="{% url 'perfil' %}">Volver</a>
   </div>
 
+  <!-- Si la vista envía un mensaje de error, lo muestro aquí -->
+  {% if error %}
+    <div class="error">{{ error }}</div>
+  {% endif %}
+
+  <!-- Formulario:
+       - method POST porque estoy actualizando datos
+       - enctype multipart/form-data para permitir subir imagen (foto_perfil) -->
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="card">
+      <div class="grid">
+        <div class="row">
+          <label>Usuario</label>
+          <!-- Campo username del usuario autenticado -->
+          <input type="text" name="username" value="{{ usuario.username }}">
+        </div>
+
+        <div class="row">
+          <label>Email</label>
+          <!-- Campo email del usuario autenticado -->
+          <input type="email" name="email" value="{{ usuario.email }}">
+        </div>
+
+        <div class="row">
+          <label>Nombre</label>
+          <!-- Campo first_name del usuario -->
+          <input type="text" name="first_name" value="{{ usuario.first_name }}">
+        </div>
+
+        <div class="row">
+          <label>Apellido</label>
+          <!-- Campo last_name del usuario -->
+          <input type="text" name="last_name" value="{{ usuario.last_name }}">
+        </div>
+
+        <div class="row row-full">
+          <label>Foto de perfil (opcional)</label>
+
+          <!-- Input file para subir una imagen:
+               accept="image/*" restringe selección a archivos de imagen -->
+          <input type="file" name="foto_perfil" accept="image/*">
+
+          <div class="hint">Si no subes una foto, se mantiene la actual.</div>
+        </div>
+      </div>
+
+      <!-- Sección opcional de cambio de contraseña -->
+      <div class="section-title">Cambiar contraseña (opcional)</div>
+
+      <div class="grid">
+        <div class="row">
+          <label>Nueva contraseña</label>
+          <!-- password1: primera entrada de nueva contraseña -->
+          <input type="password" name="password1" placeholder="Deja vacío para no cambiar">
+        </div>
+
+        <div class="row">
+          <label>Repetir nueva contraseña</label>
+          <!-- password2: confirmación de nueva contraseña -->
+          <input type="password" name="password2" placeholder="Repite la contraseña">
+        </div>
+      </div>
+
+      <!-- Acciones del formulario:
+           - Cancelar vuelve al perfil practicante sin guardar
+           - Guardar envía POST -->
+      <div class="actions">
+        <a class="btn btn-ghost" href="{% url 'perfil' %}">Cancelar</a>
+        <button class="btn" type="submit">Guardar cambios</button>
+      </div>
+    </div>
+  </form>
 </div>
 
 {% endblock %}
