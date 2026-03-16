@@ -228,6 +228,12 @@ def perfil_editar(request):
         "error": error
     })
 
+#@login_required
+#def sugerencias(request):
+
+    #if request.method == "POST":
+        
+
 
 # =========================================================
 # PROYECTOS

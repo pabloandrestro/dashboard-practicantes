@@ -62,6 +62,7 @@ urlpatterns = [
     # =========================
     path("perfil/", perfil, name="perfil"),
     path("perfil/editar/", perfil_editar, name="perfil_editar"),
+    #path("sugerencias/", sugerencias, name="sugerencias"),
 
     # =========================
     # SECCIONES PRINCIPALES

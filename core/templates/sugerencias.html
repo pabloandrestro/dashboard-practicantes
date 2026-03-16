@@ -96,7 +96,7 @@
 
 <div class="wrap">
   <div class="top">
-    <h1>Editar perfil</h1>
+    <h1>Sugerencias</h1>
 
     <!-- Botón para volver a la vista del perfil del practicante -->
     <a class="btn btn-ghost" href="{% url 'perfil' %}">Volver</a>
@@ -108,9 +108,8 @@
   {% endif %}
 
   <!-- Formulario:
-       - method POST porque estoy actualizando datos
-       - enctype multipart/form-data para permitir subir imagen (foto_perfil) -->
-  <form method="POST" enctype="multipart/form-data">
+       - method POST porque estoy agregando las sugerencias -->
+  <form method="POST">
     {% csrf_token %}
 
     <div class="card">
@@ -133,94 +132,23 @@
           <input type="text" name="first_name" value="{{ usuario.first_name }}">
         </div>
 
-        <div class="row">
-          <label>Apellido</label>
-          <!-- Campo last_name del usuario -->
-          <input type="text" name="last_name" value="{{ usuario.last_name }}">
-        </div>
 
         <div class="row">
-          <label>Rut</label>
-          <!-- Campo rut del usuario -->
-          <input type="text" name="rut" value="{{ usuario.rut }}">
+          <label>Sugerencias</label>
+          <!-- Campo sugerencias del usuario -->
+          <input type="text" name="sugerencias">
         </div>
 
-        <div class="row">
-          <label>Fecha de nacimiento</label>
-          <!-- Campo fecha_nacimiento del usuario -->
-          <input type="text" name="fecha_nacimiento" value="{{ usuario.fecha_nacimiento }}">
-        </div>
-
-        <div class="row">
-          <label>Universidad</label>
-          <!-- Campo universidad del usuario -->
-          <input type="text" name="universidad" value="{{ usuario.universidad }}">
-        </div>
-
-        <div class="row">
-          <label>Carrera</label>
-          <!-- Campo carrera del usuario -->
-          <input type="text" name="carrera" value="{{ usuario.carrera }}">
-        </div>
-
-        <div class="row">
-          <label>Celular</label>
-          <!-- Campo celular del usuario -->
-          <input type="text" name="celular" value="{{ usuario.celular }}">
-        </div>
-
-        <div class="row">
-          <label>Inicio de práctica</label>
-          <!-- Campo fecha_inicio_practica del usuario -->
-          <input type="text" name="fecha_inicio_practica" value="{{ usuario.fecha_inicio_practica }}">
-        </div>
-
-        <div class="row">
-          <label>Termino de práctica</label>
-          <!-- Campo fecha_termino_practica del usuario -->
-          <input type="text" name="fecha_termino_practica" value="{{ usuario.fecha_termino_practica }}">
-        </div>
-
-        <div class="row">
-          <label>Horas requeridas</label>
-          <!-- Campo horas_requeridas del usuario -->
-          <input type="text" name="horas_requeridas" value="{{ usuario.horas_requeridas }}">
-        </div>
-
-        <div class="row row-full">
-          <label>Foto de perfil (opcional)</label>
-
-          <!-- Input file para subir una imagen:
-               accept="image/*" restringe selección a archivos de imagen -->
-          <input type="file" name="foto_perfil" accept="image/*">
-
-          <div class="hint">Si no subes una foto, se mantiene la actual.</div>
-        </div>
+        
       </div>
 
-      <!-- Sección opcional de cambio de contraseña -->
-      <div class="section-title">Cambiar contraseña (opcional)</div>
-
-      <div class="grid">
-        <div class="row">
-          <label>Nueva contraseña</label>
-          <!-- password1: primera entrada de nueva contraseña -->
-          <input type="password" name="password1" placeholder="Deja vacío para no cambiar">
-        </div>
-
-        <div class="row">
-          <label>Repetir nueva contraseña</label>
-          <!-- password2: confirmación de nueva contraseña -->
-          <input type="password" name="password2" placeholder="Repite la contraseña">
-        </div>
-      </div>
 
       <!-- Acciones del formulario:
            - Cancelar vuelve al perfil practicante sin guardar
            - Guardar envía POST -->
       <div class="actions">
         <a class="btn btn-ghost" href="{% url 'perfil' %}">Cancelar</a>
-        <button class="btn" type="submit">Guardar cambios</button>
+        <button class="btn" type="submit">Enviar</button>
       </div>
     </div>
   </form>

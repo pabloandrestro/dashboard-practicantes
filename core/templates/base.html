@@ -48,7 +48,7 @@
     /* Contenedor de links del menú */
     .nav-links{
       display:flex;
-      gap:40px;
+      gap:20px;
       align-items:center;
       justify-content:center;
       flex-wrap:wrap;
@@ -139,6 +139,12 @@
             Reporte
           </a>
 
+          <!-- Menú sugerencias -->
+          <a href="{% url 'sugerencias' %}"
+             class="{% if request.resolver_match.url_name == 'sugerencias' %}active{% endif %}">
+            Sugerencias
+          </a>
+
           <!-- Perfil admin -->
           <a href="{% url 'admin_perfil' %}"
              class="{% if request.resolver_match.url_name == 'admin_perfil' or request.resolver_match.url_name == 'admin_perfil_editar' %}active{% endif %}">
@@ -200,6 +206,11 @@
              class="{% if request.resolver_match.url_name == 'horas' %}active{% endif %}">
             Registro de horas
           </a>
+
+          <!-- <a href="{% url 'perfil' %}"
+             class="{% if request.resolver_match.url_name == 'sugerencias' %}active{% endif %}">
+            Sugerencias
+          </a> -->
 
           <a href="{% url 'perfil' %}"
              class="{% if request.resolver_match.url_name == 'perfil' %}active{% endif %}">
