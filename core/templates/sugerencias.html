@@ -136,7 +136,7 @@
         <div class="row">
           <label>Sugerencias</label>
           <!-- Campo sugerencias del usuario -->
-          <input type="text" name="sugerencias">
+          <input type="text" name="sugerencias" value="{{ form.sugerencias.value|default_if_none:'' }}">
         </div>
 
         

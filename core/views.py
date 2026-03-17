@@ -42,6 +42,7 @@ from .models import (
     ReporteAvance,
     RegistroJornada,
     PerfilAdmin,
+    Sugerencia,
 )
 
 # Importo formularios que uso en las vistas
@@ -52,6 +53,7 @@ from .forms import (
     ProyectoForm,
     AdminCrearPracticanteUserForm,
     AdminEditarUsuarioForm,
+    SugerenciaForm,
 )
 
 User = get_user_model()
@@ -210,6 +212,20 @@ def perfil_editar(request):
                 update_session_auth_hash(request, request.user)
 
             return redirect("perfil")
+        else:
+            # SEGURIDAD/UX (2026-03-17):
+            # Si el formulario es inválido, NO guardo nada y muestro un error claro.
+            # Antes quedaba silencioso (parecía que guardaba, pero no persistía).
+            try:
+                # Tomo el primer error del formulario para mostrarlo arriba.
+                primer_error = next(iter(form.errors.values()))[0]
+            except Exception:
+                primer_error = "Revisa los campos: hay datos inválidos."
+            return render(request, "perfil_editar.html", {
+                "form": form,
+                "practicante": practicante,
+                "error": primer_error,
+            })
 
     else:
         # Si es GET, precargo datos del User en el formulario
@@ -228,11 +244,46 @@ def perfil_editar(request):
         "error": error
     })
 
-#@login_required
-#def sugerencias(request):
+@login_required
+def sugerencias(request):
+    """
+    Permito que el practicante envíe sugerencias/comentarios.
 
-    #if request.method == "POST":
-        
+    - En GET muestro el formulario precargado con los datos del usuario.
+    - En POST valido que venga alguna sugerencia y, si todo está bien,
+      muestro un mensaje de éxito y redirijo al perfil.
+
+    (Si en el futuro quieres persistir estas sugerencias, aquí podrías
+    guardarlas en un modelo o enviarlas por correo.)
+    """
+    usuario = request.user
+    error = None
+
+    if request.method == "POST":
+        form = SugerenciaForm(request.POST)
+        if form.is_valid():
+            sugerencias_txt = form.cleaned_data["sugerencias"]
+
+            # Guardo la sugerencia en base de datos
+            Sugerencia.objects.create(
+                usuario=usuario,
+                nombre=f"{usuario.first_name} {usuario.last_name}".strip() or usuario.username,
+                email=usuario.email,
+                texto=sugerencias_txt,
+            )
+            messages.success(request, "¡Gracias! Tu sugerencia fue enviada correctamente.")
+            return redirect("perfil")
+        else:
+            # Muestro el primer error del campo para mantener tu template simple
+            error = form.errors.get("sugerencias", ["Entrada inválida."])[0]
+    else:
+        form = SugerenciaForm()
+
+    return render(request, "sugerencias.html", {
+        "usuario": usuario,
+        "error": error,
+        "form": form,
+    })
 
 
 # =========================================================

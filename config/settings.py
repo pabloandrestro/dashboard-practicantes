@@ -49,7 +49,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # App propia del proyecto
-    'core',
+    # REFACTOR (2026-03-17): uso AppConfig explícito para asegurar que se ejecute
+    # CoreConfig.ready() (donde registramos signals del proyecto).
+    'core.apps.CoreConfig',
 ]
 
 

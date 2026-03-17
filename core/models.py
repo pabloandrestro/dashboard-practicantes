@@ -6,8 +6,11 @@ Cada clase representa una tabla en la base de datos.
 
 También incluyo:
 - Cálculo automático de horas trabajadas en RegistroJornada.
-- Una función utilitaria para sumar horas trabajadas por usuario.
-- Creación automática del registro Practicante cuando se crea un User normal.
+
+REFACTOR (2026-03-17):
+- La función utilitaria agregada `total_horas_usuario` fue movida a `core/services/horas.py`.
+- La creación automática de `Practicante` vía signal fue movida a `core/signals.py`
+  y se registra desde `core/apps.py` (CoreConfig.ready).
 """
 
 import uuid
@@ -15,9 +18,11 @@ from datetime import datetime
 
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import Sum
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+
+# REFACTOR (2026-03-17):
+# - Se removieron los signals y funciones de cálculo agregadas desde este archivo.
+# - Signals ahora viven en `core/signals.py`
+# - Cálculos agregados (ej: total de horas por usuario) viven en `core/services/horas.py`
 
 
 # =========================================================
@@ -107,6 +112,38 @@ class RegistroJornada(models.Model):
     # DurationField guarda una duración (timedelta).
     horas_trabajadas = models.DurationField(null=True, blank=True)
 
+    def calcular_horas_trabajadas(self):
+        """
+        REFACTOR (2026-03-17):
+        Extraigo el cálculo a un método dedicado para que `save()` quede más limpio
+        y la lógica sea reutilizable (tests, servicios, etc.).
+
+        Retorno:
+        - timedelta si puedo calcular
+        - None si no corresponde (por ejemplo, no hay hora_salida o hay datos inválidos)
+        """
+        if not self.hora_salida:
+            return None
+
+        entrada = datetime.combine(self.fecha, self.hora_entrada)
+        salida = datetime.combine(self.fecha, self.hora_salida)
+
+        # Evito duraciones negativas o 0 si la salida es inválida.
+        if salida <= entrada:
+            return None
+
+        tiempo_total = salida - entrada
+
+        # Descuento pausa solo si es válida.
+        if self.inicio_pausa and self.fin_pausa:
+            pausa_inicio = datetime.combine(self.fecha, self.inicio_pausa)
+            pausa_fin = datetime.combine(self.fecha, self.fin_pausa)
+
+            if pausa_fin > pausa_inicio:
+                tiempo_total -= (pausa_fin - pausa_inicio)
+
+        return tiempo_total if tiempo_total.total_seconds() > 0 else None
+
     def save(self, *args, **kwargs):
         """
         Antes de guardar, calculo automáticamente las horas trabajadas.
@@ -116,60 +153,13 @@ class RegistroJornada(models.Model):
         - Evito negativos si salida <= entrada.
         - Descuento pausa solo si inicio y fin existen y fin > inicio.
         """
-        self.horas_trabajadas = None  # Por defecto lo dejo vacío
-
-        if self.hora_salida:
-            entrada = datetime.combine(self.fecha, self.hora_entrada)
-            salida = datetime.combine(self.fecha, self.hora_salida)
-
-            # Evito guardar resultados negativos o 0 si la salida es inválida.
-            if salida <= entrada:
-                super().save(*args, **kwargs)
-                return
-
-            tiempo_total = salida - entrada
-
-            # Descuento pausa solo si es válida.
-            if self.inicio_pausa and self.fin_pausa:
-                pausa_inicio = datetime.combine(self.fecha, self.inicio_pausa)
-                pausa_fin = datetime.combine(self.fecha, self.fin_pausa)
-
-                if pausa_fin > pausa_inicio:
-                    tiempo_total -= (pausa_fin - pausa_inicio)
-
-            # Si por cualquier motivo queda <= 0, no guardo una duración inválida.
-            if tiempo_total.total_seconds() > 0:
-                self.horas_trabajadas = tiempo_total
+        # REFACTOR (2026-03-17): delego el cálculo a `calcular_horas_trabajadas()`.
+        self.horas_trabajadas = self.calcular_horas_trabajadas()
 
         super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.usuario.username} - {self.fecha}"
-
-
-# =========================================================
-# FUNCIÓN UTILITARIA: TOTAL DE HORAS POR USUARIO
-# =========================================================
-def total_horas_usuario(usuario):
-    """
-    Calculo el total de horas trabajadas por un usuario sumando sus registros.
-
-    Retorno un string legible tipo:
-    - "0 horas"
-    - "12 horas 30 minutos"
-    """
-
-    registros = RegistroJornada.objects.filter(usuario=usuario)
-    total = registros.aggregate(Sum("horas_trabajadas"))["horas_trabajadas__sum"]
-
-    if not total:
-        return "0 horas"
-
-    total_segundos = total.total_seconds()
-    horas = int(total_segundos // 3600)
-    minutos = int((total_segundos % 3600) // 60)
-
-    return f"{horas} horas {minutos} minutos"
 
 
 # =========================================================
@@ -211,22 +201,6 @@ class Practicante(models.Model):
 
 
 # =========================================================
-# SIGNAL: CREACIÓN AUTOMÁTICA DE PRACTICANTE
-# =========================================================
-@receiver(post_save, sender=User)
-def crear_practicante(sender, instance, created, **kwargs):
-    """
-    Cuando se crea un User nuevo, creo automáticamente su registro Practicante
-    si no es staff ni superuser.
-
-    Uso get_or_create() para evitar duplicados si el registro ya existe
-    por alguna razón (por ejemplo, creación manual o procesos paralelos).
-    """
-    if created and (not instance.is_staff) and (not instance.is_superuser):
-        Practicante.objects.get_or_create(user=instance)
-
-
-# =========================================================
 # MODELO: REPORTE DE AVANCE
 # =========================================================
 class ReporteAvance(models.Model):
@@ -260,3 +234,27 @@ class PerfilAdmin(models.Model):
 
     def __str__(self):
         return f"PerfilAdmin: {self.user.username}"
+
+
+# =========================================================
+# MODELO: SUGERENCIA
+# =========================================================
+class Sugerencia(models.Model):
+    """
+    Represento una sugerencia enviada por un usuario.
+
+    Guardo:
+    - nombre de usuario (FK a User)
+    - nombre y email al momento de enviar (por si cambian después)
+    - el texto de la sugerencia
+    - la fecha y hora de envío
+    """
+
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    nombre = models.CharField(max_length=255)
+    email = models.EmailField()
+    texto = models.TextField()
+    creado_en = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Sugerencia de {self.usuario.username} ({self.creado_en.strftime('%d/%m/%y %H:%M')})"

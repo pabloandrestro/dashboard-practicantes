@@ -20,7 +20,7 @@ from core.views import (
     inicio, proyectos, horas,
 
     # Perfil practicante
-    perfil, perfil_editar,
+    perfil, perfil_editar, sugerencias,
 
     # Proyectos / reportes / horas
     proyecto_crear, proyecto_detalle, proyecto_cambiar_foto,
@@ -62,7 +62,7 @@ urlpatterns = [
     # =========================
     path("perfil/", perfil, name="perfil"),
     path("perfil/editar/", perfil_editar, name="perfil_editar"),
-    #path("sugerencias/", sugerencias, name="sugerencias"),
+    path("sugerencias/", sugerencias, name="sugerencias"),
 
     # =========================
     # SECCIONES PRINCIPALES

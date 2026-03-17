@@ -117,74 +117,63 @@
       <div class="grid">
         <div class="row">
           <label>Usuario</label>
-          <!-- Campo username del usuario autenticado -->
-          <input type="text" name="username" value="{{ usuario.username }}">
+          <!-- Username no se edita desde este formulario (solo informativo). -->
+          <input type="text" value="{{ request.user.username }}" readonly>
         </div>
 
         <div class="row">
           <label>Email</label>
-          <!-- Campo email del usuario autenticado -->
-          <input type="email" name="email" value="{{ usuario.email }}">
+          <input type="email" name="email" value="{{ form.email.value|default_if_none:'' }}">
         </div>
 
         <div class="row">
           <label>Nombre</label>
-          <!-- Campo first_name del usuario -->
-          <input type="text" name="first_name" value="{{ usuario.first_name }}">
+          <input type="text" name="first_name" value="{{ form.first_name.value|default_if_none:'' }}">
         </div>
 
         <div class="row">
           <label>Apellido</label>
-          <!-- Campo last_name del usuario -->
-          <input type="text" name="last_name" value="{{ usuario.last_name }}">
+          <input type="text" name="last_name" value="{{ form.last_name.value|default_if_none:'' }}">
         </div>
 
         <div class="row">
           <label>Rut</label>
-          <!-- Campo rut del usuario -->
-          <input type="text" name="rut" value="{{ usuario.rut }}">
+          <input type="text" name="rut" value="{{ form.rut.value|default_if_none:'' }}">
         </div>
 
         <div class="row">
           <label>Fecha de nacimiento</label>
-          <!-- Campo fecha_nacimiento del usuario -->
-          <input type="text" name="fecha_nacimiento" value="{{ usuario.fecha_nacimiento }}">
+          <input type="date" name="fecha_nacimiento" value="{{ form.fecha_nacimiento.value|default_if_none:'' }}">
         </div>
 
         <div class="row">
           <label>Universidad</label>
-          <!-- Campo universidad del usuario -->
-          <input type="text" name="universidad" value="{{ usuario.universidad }}">
+          <input type="text" name="universidad" value="{{ form.universidad.value|default_if_none:'' }}">
         </div>
 
         <div class="row">
           <label>Carrera</label>
-          <!-- Campo carrera del usuario -->
-          <input type="text" name="carrera" value="{{ usuario.carrera }}">
+          <input type="text" name="carrera" value="{{ form.carrera.value|default_if_none:'' }}">
         </div>
 
         <div class="row">
           <label>Celular</label>
-          <!-- Campo celular del usuario -->
-          <input type="text" name="celular" value="{{ usuario.celular }}">
+          <input type="text" name="celular" value="{{ form.celular.value|default_if_none:'' }}">
         </div>
 
         <div class="row">
           <label>Inicio de práctica</label>
-          <!-- Campo fecha_inicio_practica del usuario -->
-          <input type="text" name="fecha_inicio_practica" value="{{ usuario.fecha_inicio_practica }}">
+          <input type="date" name="fecha_inicio_practica" value="{{ form.fecha_inicio_practica.value|default_if_none:'' }}">
         </div>
 
         <div class="row">
-          <label>Termino de práctica</label>
-          <!-- Campo fecha_termino_practica del usuario -->
-          <input type="text" name="fecha_termino_practica" value="{{ usuario.fecha_termino_practica }}">
+          <label>Término de práctica</label>
+          <input type="date" name="fecha_termino_practica" value="{{ form.fecha_termino_practica.value|default_if_none:'' }}">
         </div>
 
         <div class="row">
           <label>Horas requeridas</label>
-          <!-- Campo horas_requeridas del usuario -->
-          <input type="text" name="horas_requeridas" value="{{ usuario.horas_requeridas }}">
+          <input type="number" name="horas_requeridas" value="{{ form.horas_requeridas.value|default_if_none:'' }}">
         </div>
 
         <div class="row row-full">
