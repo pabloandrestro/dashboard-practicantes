@@ -13,7 +13,7 @@ node_modules/
 
 
 
-# Se sube la BD temporalmente para el desarrollo
+# ****Se sube la BD temporalmente para el desarrollo****
 # Base de Datos Local (¡Crítico!)
 # No queremos subir datos de prueba ni usuarios locales al repo [cite: 33]
 # *.sqlite3
