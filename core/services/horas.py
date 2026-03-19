@@ -30,4 +30,3 @@ def total_horas_usuario(usuario) -> str:
     minutos = int((total_segundos % 3600) // 60)
 
     return f"{horas} horas {minutos} minutos"
-

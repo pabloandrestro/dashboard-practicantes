@@ -1,17 +1,34 @@
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+.python-version
 
-# Entorno virtual
+# Entorno virtual y dependencias
 venv/
 env/
+.venv/
+node_modules/
 
 
-# Archivos del sistema
+
+# Se sube la BD temporalmente para el desarrollo
+# Base de Datos Local (¡Crítico!)
+# No queremos subir datos de prueba ni usuarios locales al repo [cite: 33]
+# *.sqlite3
+
+# Archivos del sistema y Editores
 .DS_Store
-
-# VSCode
+Thumbs.db
 .vscode/
+.idea/
+*.swp
 
-# Variables de entorno
+# Variables de entorno (Seguridad)
+# Aquí irán las futuras credenciales de Supabase
 .env
+.env.local
+
+# Archivos de logs
+*.log
