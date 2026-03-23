@@ -8,8 +8,8 @@ Este proyecto utiliza **Docker** y **WSL 2** para estandarizar el entorno de des
 
 Antes de comenzar, asegúrate de tener instalado en tu sistema:
 
-1. **Docker Desktop**: [Descargar aquí](https://www.docker.com/products/docker-desktop/).
-   * *Importante:* Durante la instalación, asegúrate de marcar la opción **"Use recommended settings (WSL 2)"**.
+1. **Docker Desktop**: [Descargar aquí](https://www.docker.com/products/docker-desktop/). 
+   * *Importante:* Descargar la version AMD64 y durante la instalación, asegúrate de marcar la opción **"Use recommended settings (WSL 2)"**.
 2. **Git**: Para clonar el repositorio.
 3. **WSL 2 Actualizado**: Abre una terminal como administrador y ejecuta:
    ```bash
