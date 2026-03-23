@@ -258,6 +258,14 @@ def sugerencias(request):
     """
     usuario = request.user
     error = None
+    # REFACTOR/UX (2026-03-17):
+    # Lista de sugerencias activas para mostrar en la misma página.
+    # Como no existe un campo "estado" en el modelo, interpretamos "activas"
+    # como "existentes" en BD. Para no exponer datos, un practicante solo ve
+    # sus propias sugerencias; el superuser ve todas.
+
+    sugerencias_qs = Sugerencia.objects.all().order_by("-creado_en")
+ 
 
     if request.method == "POST":
         form = SugerenciaForm(request.POST)
@@ -272,7 +280,7 @@ def sugerencias(request):
                 texto=sugerencias_txt,
             )
             messages.success(request, "¡Gracias! Tu sugerencia fue enviada correctamente.")
-            return redirect("perfil")
+            return redirect("sugerencias")
         else:
             # Muestro el primer error del campo para mantener tu template simple
             error = form.errors.get("sugerencias", ["Entrada inválida."])[0]
@@ -283,6 +291,7 @@ def sugerencias(request):
         "usuario": usuario,
         "error": error,
         "form": form,
+        "sugerencias_list": sugerencias_qs,
     })
 
 

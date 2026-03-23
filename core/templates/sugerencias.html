@@ -116,24 +116,23 @@
       <div class="grid">
         <div class="row">
           <label>Usuario</label>
-          <!-- Campo username del usuario autenticado -->
-          <input type="text" name="username" value="{{ usuario.username }}">
+          <!-- Informativo (no se valida desde el form). -->
+          <input type="text" name="username" value="{{ usuario.username }}" readonly>
         </div>
 
         <div class="row">
           <label>Email</label>
-          <!-- Campo email del usuario autenticado -->
-          <input type="email" name="email" value="{{ usuario.email }}">
+          <!-- Informativo (no se valida desde el form). -->
+          <input type="email" name="email" value="{{ usuario.email }}" readonly>
         </div>
 
-        <div class="row">
+        <div class="row row-full">
           <label>Nombre</label>
-          <!-- Campo first_name del usuario -->
-          <input type="text" name="first_name" value="{{ usuario.first_name }}">
+          <!-- Informativo (no se valida desde el form). -->
+          <input type="text" name="first_name" value="{{ usuario.first_name }} {{ usuario.last_name }}" readonly>
         </div>
 
-
-        <div class="row">
+        <div class="row row-full">
           <label>Sugerencias</label>
           <!-- Campo sugerencias del usuario -->
           <input type="text" name="sugerencias" value="{{ form.sugerencias.value|default_if_none:'' }}">
@@ -152,6 +151,43 @@
       </div>
     </div>
   </form>
+
+  <!-- Sección: listado de sugerencias -->
+  <div class="card" style="margin-top:20px;">
+    <div class="top">
+      <h1>{{ "Sugerencias Activas" }}</h1>
+    </div>
+
+    {% if sugerencias_list %}
+      {% for s in sugerencias_list %}
+        <div class="row">
+          <div class="card">
+            <div class="row">
+              <label>Nombre</label>
+              <div>{{ s.nombre }} </div>
+            </div>
+
+            <div class="row">
+              <label>Usuario</label>
+              <div>{{ s.usuario.username }} · {{ s.email }}</div>
+            </div>
+
+            <div class="row">
+              <label>Enviado</label>
+              <div>{{ s.creado_en|date:"d/m/y H:i" }}</div>
+            </div>
+
+            <div class="row row-full">
+              <label>Detalle</label>
+              <div>{{ s.texto|linebreaksbr }}</div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="hint">No hay sugerencias para mostrar.</div>
+    {% endif %}
+  </div>
 </div>
 
 {% endblock %}
