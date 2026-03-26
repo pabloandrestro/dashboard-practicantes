@@ -9,7 +9,8 @@ Este archivo define la configuración global del proyecto Django:
 - Archivos estáticos y media
 - URLs de login/logout, etc.
 """
-
+import dj_database_url
+import os
 from pathlib import Path
 
 # BASE_DIR apunta a la carpeta raíz del proyecto (donde está manage.py aprox.)
@@ -119,13 +120,21 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # =========================
 # SQLite para desarrollo (archivo db.sqlite3 dentro del proyecto).
 # En producción normalmente se usa Postgres/MySQL, etc.
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=f"sqlite:///{os.path.join(BASE_DIR, 'db.sqlite3')}"
+#     )
+# }
+
+DATABASES = {
+    'default': dj_database_url.config(
+        # El default solo se usa si NO encuentra DATABASE_URL en el .env
+        default=f"sqlite:///{os.path.join(BASE_DIR, 'db.sqlite3')}",
+        conn_max_age=600,      # Mantiene la conexión abierta 10 min (más rápido)
+        conn_health_checks=True, # Verifica si la conexión sigue viva antes de usarla
+    )
+}
 
 # =========================
 # Validación de contraseñas
