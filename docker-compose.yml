@@ -3,10 +3,14 @@ services:
     build: .
     volumes:
       - .:/app
+      - /app/.venv
     ports:
       - "8000:8000"
     env_file:
       - .env
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     environment:
       - DEBUG=1
     command: >
