@@ -33,7 +33,11 @@ DEBUG = True
 
 # Hosts permitidos para servir la app.
 # En producción se llena con dominios/IPs (ej: ["tudominio.com", "www.tudominio.com"]).
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'dashboard-practicantes.vercel.app', 
+    'localhost', 
+    '127.0.0.1'
+]
 
 
 # =========================
