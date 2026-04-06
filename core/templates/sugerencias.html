@@ -92,6 +92,51 @@
     .grid{ grid-template-columns:1fr; }
     .top h1{ font-size:38px; }
   }
+
+  /* Tarjeta de sugerencia: posición relativa para el badge */
+  .card-sugerencia {
+    position: relative;
+    padding-top: 22px;
+  }
+
+  /* Badge/botón de estado pill — esquina superior derecha */
+  .estado-btn {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    padding: 6px 18px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+    border: none;
+    white-space: nowrap;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+  }
+
+  /* Clickeable (superusuario) */
+  button.estado-btn {
+    cursor: pointer;
+  }
+  button.estado-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+  button.estado-btn:active {
+    transform: scale(0.97);
+  }
+
+  /* Solo lectura (usuario normal) */
+  span.estado-btn {
+    cursor: default;
+  }
+
+  /* Colores por estado */
+  .estado-enviada    { background: #dbeafe; color: #1d4ed8; }
+  .estado-leida      { background: #fef9c3; color: #92400e; }
+  .estado-finalizada { background: #dcfce7; color: #15803d; }
+
 </style>
 
 <div class="wrap">
@@ -161,7 +206,29 @@
     {% if sugerencias_list %}
       {% for s in sugerencias_list %}
         <div class="row">
-          <div class="card">
+          <div class="card card-sugerencia">
+
+            {% if request.user.is_superuser %}
+              <!-- Superusuario: botón pill que cicla al siguiente estado al hacer clic -->
+              <form method="POST" action="{% url 'sugerencia_cambiar_estado' s.id %}" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="estado" id="next-{{ s.id }}"
+                  value="{% if s.estado == 'enviada' %}leida{% elif s.estado == 'leida' %}finalizada{% else %}enviada{% endif %}">
+                <button
+                  type="submit"
+                  class="estado-btn estado-{{ s.estado }}"
+                  title="Clic para avanzar al siguiente estado"
+                >
+                  {{ s.get_estado_display }}
+                </button>
+              </form>
+            {% else %}
+              <!-- Usuario normal: solo lectura -->
+              <span class="estado-btn estado-{{ s.estado }}">
+                {{ s.get_estado_display }}
+              </span>
+            {% endif %}
+
             <div class="row">
               <label>Nombre</label>
               <div>{{ s.nombre }} </div>
@@ -184,6 +251,7 @@
           </div>
         </div>
       {% endfor %}
+
     {% else %}
       <div class="hint">No hay sugerencias para mostrar.</div>
     {% endif %}

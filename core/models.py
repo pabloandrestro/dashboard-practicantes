@@ -250,11 +250,22 @@ class Sugerencia(models.Model):
     - la fecha y hora de envío
     """
 
+    ESTADO_CHOICES = [
+        ("enviada", "Enviada"),
+        ("leida", "Leida"),
+        ("finalizada", "Finalizada"),
+    ]
+
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=255)
     email = models.EmailField()
     texto = models.TextField()
     creado_en = models.DateTimeField(auto_now_add=True)
+    estado = models.CharField(
+        max_length=20,
+        choices=ESTADO_CHOICES,
+        default="enviada",
+    )
 
     def __str__(self):
         return f"Sugerencia de {self.usuario.username} ({self.creado_en.strftime('%d/%m/%y %H:%M')})"

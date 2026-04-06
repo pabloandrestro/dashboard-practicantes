@@ -295,6 +295,28 @@ def sugerencias(request):
     })
 
 
+@login_required
+@require_POST
+def sugerencia_cambiar_estado(request, sugerencia_id):
+    """
+    Permito al superusuario cambiar el estado de una sugerencia.
+    Los estados válidos son: enviada, leida, finalizada.
+    """
+    if not request.user.is_superuser:
+        return redirect("sugerencias")
+
+    sugerencia = get_object_or_404(Sugerencia, id=sugerencia_id)
+    nuevo_estado = request.POST.get("estado", "").strip()
+
+    estados_validos = [choice[0] for choice in Sugerencia.ESTADO_CHOICES]
+    if nuevo_estado in estados_validos:
+        sugerencia.estado = nuevo_estado
+        sugerencia.save(update_fields=["estado"])
+
+    return redirect("sugerencias")
+
+
+
 # =========================================================
 # PROYECTOS
 # =========================================================
