@@ -109,7 +109,7 @@
 
   <!-- Formulario:
        - method POST porque estoy agregando las sugerencias -->
-  <form method="POST">
+  <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
 
     <div class="card">
@@ -138,6 +138,10 @@
           <input type="text" name="sugerencias" value="{{ form.sugerencias.value|default_if_none:'' }}">
         </div>
 
+        <div class="row row-full">
+          <label>Adjuntar Foto o Video </label>
+          <input type="file" name="archivo_adjunto" accept="image/*,video/*" style="background: #fff; cursor: pointer;">
+        </div>
         
       </div>
 
@@ -181,6 +185,17 @@
               <label>Detalle</label>
               <div>{{ s.texto|linebreaksbr }}</div>
             </div>
+            {% if s.archivo_adjunto %}
+            <div class="row row-full" style="margin-top: 15px;">
+              <label>Archivo Adjunto</label>
+              <div>
+                <a href="{{ s.archivo_adjunto.url }}" target="_blank" style="color: #14b8d4; font-weight: 800; display: inline-block; margin-bottom: 10px;">Ver archivo completo</a>
+                <br>
+                
+                <img src="{{ s.archivo_adjunto.url }}" alt="Archivo adjunto" style="max-width: 100%; border-radius: 12px; border: 1px solid #ddd;">
+              </div>
+            </div>
+            {% endif %}
           </div>
         </div>
       {% endfor %}

@@ -255,6 +255,7 @@ class Sugerencia(models.Model):
     email = models.EmailField()
     texto = models.TextField()
     creado_en = models.DateTimeField(auto_now_add=True)
+    archivo_adjunto = models.FileField(upload_to="sugerencias_multimedia/", null=True, blank=True)
 
     def __str__(self):
         return f"Sugerencia de {self.usuario.username} ({self.creado_en.strftime('%d/%m/%y %H:%M')})"
