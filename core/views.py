@@ -268,16 +268,17 @@ def sugerencias(request):
  
 
     if request.method == "POST":
-        form = SugerenciaForm(request.POST)
+        form = SugerenciaForm(request.POST, request.FILES)
         if form.is_valid():
             sugerencias_txt = form.cleaned_data["sugerencias"]
-
+            archivo = request.FILES.get("archivo_adjunto")
             # Guardo la sugerencia en base de datos
             Sugerencia.objects.create(
                 usuario=usuario,
                 nombre=f"{usuario.first_name} {usuario.last_name}".strip() or usuario.username,
                 email=usuario.email,
                 texto=sugerencias_txt,
+                archivo_adjunto=archivo,
             )
             messages.success(request, "¡Gracias! Tu sugerencia fue enviada correctamente.")
             return redirect("sugerencias")
