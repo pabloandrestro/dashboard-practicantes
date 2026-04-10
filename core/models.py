@@ -266,6 +266,11 @@ class Sugerencia(models.Model):
         choices=ESTADO_CHOICES,
         default="enviada",
     )
+    archivo_adjunto = models.FileField(
+        upload_to="sugerencias_multimedia/",
+        null=True,
+        blank=True
+    )
 
     def __str__(self):
         return f"Sugerencia de {self.usuario.username} ({self.creado_en.strftime('%d/%m/%y %H:%M')})"

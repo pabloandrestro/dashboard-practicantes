@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages',
 
     # App propia del proyecto
     # REFACTOR (2026-03-17): uso AppConfig explícito para asegurar que se ejecute
@@ -200,3 +201,18 @@ LOGIN_URL = '/login/'
 # Config por defecto de PKs
 # =========================
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#==========================
+
+# Configuración de Supabase Storage (S3 Compatible)
+AWS_ACCESS_KEY_ID = 'mljqhmrwhnotmevvvclb'  # El ID de tu proyecto (está en la URL de Supabase)
+AWS_SECRET_ACCESS_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1sanFobXJ3aG5vdG1ldnZ2Y2xiIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3Mzc1MjI1NiwiZXhwIjoyMDg5MzI4MjU2fQ.aynbEDM1toj0pMmwQICX6C9hfWIWW4Tj3Hai18LsU8M'  # La encuentras en Settings > API (no uses la anon key)
+AWS_STORAGE_BUCKET_NAME = 'multimedia'  # El nombre exacto del bucket que creaste
+AWS_S3_ENDPOINT_URL = f'https://mljqhmrwhnotmevvvclb.supabase.co/storage/v1/s3'
+
+# Configuración necesaria para que Django use S3
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_S3_REGION_NAME = 'us-east-1' # Supabase usa esta por defecto
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
