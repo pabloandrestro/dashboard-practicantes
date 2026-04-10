@@ -11,7 +11,7 @@ Mi objetivo es:
 """
 
 from .models import Practicante, PerfilAdmin
-
+from .models import Sugerencia
 
 def _get_practicante(request):
     """
@@ -92,3 +92,16 @@ def es_admin_path(request):
 
     path_actual = request.path or ""
     return {"es_admin_path": path_actual.startswith("/panel/")}
+
+def sugerencias_pendientes(request):
+    """
+    Inyecta el contador de sugerencias nuevas ('enviada') 
+    solo si el usuario es administrador.
+    """
+    if request.user.is_authenticated and request.user.is_staff:
+        # Filtramos por el estado 'enviada' según tu migración 0013_sugerencia_estado.py
+        count = Sugerencia.objects.filter(estado='enviada').count()
+        return {'nuevas_sugerencias_count': count}
+    
+    # Para los practicantes normales, el conteo siempre es 0
+    return {'nuevas_sugerencias_count': 0}

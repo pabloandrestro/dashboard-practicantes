@@ -110,6 +110,9 @@ TEMPLATES = [
                 'core.context_processors.navbar_avatar',
                 'core.context_processors.es_controller',
                 'core.context_processors.es_admin_path',
+
+                # NUEVO: Inyecta el contador de sugerencias para el admin
+                'core.context_processors.sugerencias_pendientes',
             ],
         },
     },
