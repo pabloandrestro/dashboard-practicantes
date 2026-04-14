@@ -274,3 +274,72 @@ class Sugerencia(models.Model):
 
     def __str__(self):
         return f"Sugerencia de {self.usuario.username} ({self.creado_en.strftime('%d/%m/%y %H:%M')})"
+
+
+# =========================================================
+# MODELO: TAREA SCRUM
+# =========================================================
+class TareaScrum(models.Model):
+    """
+    Represento una tarea dentro del tablero Scrum de un proyecto.
+
+    Cada tarea pertenece a un proyecto, puede estar asignada a un integrante,
+    y tiene un estado que define en qué columna del tablero aparece.
+
+    Estados disponibles (en orden de flujo):
+    1. backlog      → Tarea creada, sin asignar aún.
+    2. asignado     → Tarea asignada a un integrante.
+    3. en_proceso   → El integrante está trabajando en ella.
+    4. verificacion → Lista para revisión.
+    5. completado   → Tarea terminada y verificada.
+    """
+
+    ESTADO_CHOICES = [
+        ("backlog",      "Backlog"),
+        ("asignado",     "Asignado"),
+        ("en_proceso",   "En Proceso"),
+        ("verificacion", "Verificación"),
+        ("completado",   "Completado"),
+    ]
+
+    # Proyecto al que pertenece la tarea
+    proyecto = models.ForeignKey(
+        Proyecto,
+        on_delete=models.CASCADE,
+        related_name="tareas_scrum"
+    )
+
+    # Título breve de la tarea
+    titulo = models.CharField(max_length=200)
+
+    # Descripción opcional con más detalle
+    descripcion = models.TextField(blank=True, default="")
+
+    # Estado actual de la tarea dentro del flujo Scrum
+    estado = models.CharField(
+        max_length=20,
+        choices=ESTADO_CHOICES,
+        default="backlog",
+    )
+
+    # Usuario al que está asignada (puede no estar asignada aún)
+    asignado_a = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="tareas_asignadas"
+    )
+
+    # Usuario que creó la tarea
+    creado_por = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="tareas_creadas"
+    )
+
+    # Fecha de creación automática
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"[{self.get_estado_display()}] {self.titulo} — {self.proyecto.nombre}"

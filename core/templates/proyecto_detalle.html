@@ -118,70 +118,181 @@
     color:#666;
   }
 
-  /* ================= REPORTES ================= */
+  /* ================= TABLERO SCRUM ================= */
 
-  .reportes-lista{
-    display:flex;
-    flex-direction:column;
-    gap:20px;
-    margin-top:30px;
+  .scrum-section {
+    margin-top: 36px;
   }
 
-  /* Card reporte */
-  .reporte-card{
-    background:#f4f4f4;
-    border-radius:16px;
-    padding:18px 22px;
+  .scrum-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
   }
 
-  /* Encabezado reporte */
-  .reporte-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:10px;
+  .scrum-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0;
   }
 
-  /* Usuario del reporte */
-  .reporte-user{
-    font-weight:600;
-    font-size:16px;
+  /* Contenedor del tablero: scroll horizontal en pantallas pequeñas */
+  .scrum-board {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    padding-bottom: 12px;
   }
 
-  /* Contenedor derecha (fecha + botón borrar) */
-  .reporte-right{
-    display:flex;
-    align-items:center;
-    gap:12px;
+  /* Columna del tablero */
+  .scrum-col {
+    flex: 1;
+    min-width: 190px;
+    max-width: 260px;
+    background: #f4f5f7;
+    border-radius: 14px;
+    padding: 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 
-  /* Fecha reporte */
-  .reporte-fecha{
-    font-size:14px;
-    color:#555;
-    white-space: nowrap;
+  /* Cabecera de cada columna */
+  .scrum-col-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
   }
 
-  /* Descripción del reporte */
-  .reporte-desc{
-    font-size:15px;
-    color:#333;
-    line-height:1.4;
+  .scrum-col-title {
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  /* Badge con el número de tareas */
+  .scrum-count {
+    background: rgba(0,0,0,0.1);
+    border-radius: 20px;
+    padding: 2px 8px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* Punto de color de la columna */
+  .scrum-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* Colores por estado */
+  .col-backlog      .scrum-dot { background: #94a3b8; }
+  .col-asignado     .scrum-dot { background: #3b82f6; }
+  .col-en_proceso   .scrum-dot { background: #f59e0b; }
+  .col-verificacion .scrum-dot { background: #8b5cf6; }
+  .col-completado   .scrum-dot { background: #22c55e; }
+
+  .col-backlog      .scrum-col-title { color: #64748b; }
+  .col-asignado     .scrum-col-title { color: #2563eb; }
+  .col-en_proceso   .scrum-col-title { color: #d97706; }
+  .col-verificacion .scrum-col-title { color: #7c3aed; }
+  .col-completado   .scrum-col-title { color: #16a34a; }
+
+  /* Área donde caen las cards */
+  .scrum-drop-zone {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 80px;
+  }
+
+  /* Card de tarea */
+  .tarea-card {
+    background: white;
+    border-radius: 10px;
+    padding: 12px 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    transition: box-shadow 0.18s, transform 0.18s;
+    cursor: default;
+  }
+
+  .tarea-card:hover {
+    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    transform: translateY(-2px);
+  }
+
+  .tarea-titulo {
+    font-weight: 600;
+    font-size: 14px;
+    color: #1e293b;
+    margin-bottom: 4px;
+    line-height: 1.35;
+  }
+
+  .tarea-desc {
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+
+  /* Chip del asignado */
+  .tarea-asignado {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #f1f5f9;
+    border-radius: 20px;
+    padding: 3px 9px;
+    font-size: 11px;
+    color: #475569;
+    font-weight: 500;
+  }
+
+  .tarea-asignado-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #14b8d4;
+  }
+
+  /* Mensaje vacío de columna */
+  .scrum-empty {
+    font-size: 12px;
+    color: #94a3b8;
+    text-align: center;
+    padding: 16px 0;
+    font-style: italic;
+  }
+
+  /* Footer de cada tarjeta: flechas + asignado */
+  .tarea-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin-top: 6px;
+    gap: 4px;
   }
 
-  /* Botón eliminar reporte */
-  .btn-del{
-    background:#ef4444;
-    color:white;
-    border:none;
-    cursor:pointer;
-    padding:6px 12px;
-    border-radius:8px;
-    font-weight:600;
-    font-size:12px;
+  /* Botón para mover tarea entre columnas */
+  .btn-mover {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 2px 4px;
+    opacity: 0.4;
+    transition: opacity 0.2s;
   }
-  .btn-del:hover{ filter: brightness(0.9); }
+  .btn-mover:hover {
+    opacity: 1;
+  }
 
   /* Botón unirse al proyecto */
   .btn-accion{
@@ -367,52 +478,440 @@
     </div>
   </div>
 
-  <!-- ================= NUEVO REPORTE ================= -->
-  {% if can_edit %}
-    <a href="{% url 'reporte_crear' proyecto.id %}" class="btn-nuevo">
-      + Nuevo reporte
-    </a>
-  {% endif %}
+  <!-- ================= TABLERO SCRUM ================= -->
+  <div class="scrum-section">
+    <div class="scrum-header">
+      <h2>Tablero Scrum</h2>
+      {% if can_edit %}
+        <button type="button" class="btn-nuevo" onclick="document.getElementById('modalTarea').style.display='flex'" style="margin-top:0;">
+          + Nueva tarea
+        </button>
+      {% endif %}
+    </div>
 
-  <!-- ================= LISTA REPORTES ================= -->
-  <div class="reportes-lista">
-    {% for r in reportes %}
-      <div class="reporte-card">
+    <div class="scrum-board">
 
-        <div class="reporte-top">
-          <div class="reporte-user">{{ r.usuario.username }}</div>
-
-          <div class="reporte-right">
-            <span class="reporte-fecha">
-              {{ r.fecha|date:"d-m-Y" }} • {{ r.porcentaje_avance }}%
-            </span>
-
-            <!-- BORRAR REPORTE (admin o dueño) -->
-            {% if request.user.is_staff or r.usuario.id == request.user.id %}
-              <form method="POST" action="{% url 'reporte_borrar' r.id %}">
-                {% csrf_token %}
-                <button type="submit" class="btn-del">Borrar</button>
-              </form>
-            {% endif %}
-          </div>
+      <!-- COLUMNA: BACKLOG -->
+      <div class="scrum-col col-backlog">
+        <div class="scrum-col-header">
+          <span class="scrum-dot"></span>
+          <span class="scrum-col-title">Backlog</span>
+          <span class="scrum-count">{{ tareas_por_estado.backlog|length }}</span>
         </div>
-
-        <div class="reporte-desc">{{ r.descripcion }}</div>
-
+        <div class="scrum-drop-zone">
+          {% for tarea in tareas_por_estado.backlog %}
+            <div class="tarea-card">
+              <div style="display:flex; align-items:flex-start; justify-content:space-between;">
+                <div class="tarea-titulo">{{ tarea.titulo }}</div>
+                <button type="button" class="btn-mover btn-editar-tarea" title="Editar tarea" style="font-size:12px;"
+                  data-id="{{ tarea.id }}"
+                  data-titulo="{{ tarea.titulo }}"
+                  data-descripcion="{{ tarea.descripcion|default:'' }}"
+                  data-estado="{{ tarea.estado }}"
+                  data-asignado="{{ tarea.asignado_a.id|default:'' }}"
+                  data-url-editar="{% url 'tarea_scrum_editar' tarea.id %}"
+                  data-url-borrar="{% url 'tarea_scrum_borrar' tarea.id %}">
+                  ✏️
+                </button>
+              </div>
+              {% if tarea.descripcion %}
+                <div class="tarea-desc">{{ tarea.descripcion|truncatechars:80 }}</div>
+              {% endif %}
+              <div class="tarea-footer">
+                {% if tarea.asignado_a %}
+                  <span class="tarea-asignado">
+                    <span class="tarea-asignado-dot"></span>
+                    {{ tarea.asignado_a.first_name|default:tarea.asignado_a.username }}
+                  </span>
+                {% else %}<span></span>{% endif %}
+                <form method="POST" action="{% url 'tarea_scrum_cambiar_estado' tarea.id %}" style="margin:0;">
+                  {% csrf_token %}
+                  <input type="hidden" name="estado" value="asignado">
+                  <button type="submit" class="btn-mover" title="Mover a Asignado">▶</button>
+                </form>
+              </div>
+            </div>
+          {% empty %}
+            <p class="scrum-empty">Sin tareas</p>
+          {% endfor %}
+        </div>
       </div>
-    {% empty %}
-      <p>No hay reportes aún.</p>
-    {% endfor %}
-  </div>
 
+      <!-- COLUMNA: ASIGNADO -->
+      <div class="scrum-col col-asignado">
+        <div class="scrum-col-header">
+          <span class="scrum-dot"></span>
+          <span class="scrum-col-title">Asignado</span>
+          <span class="scrum-count">{{ tareas_por_estado.asignado|length }}</span>
+        </div>
+        <div class="scrum-drop-zone">
+          {% for tarea in tareas_por_estado.asignado %}
+            <div class="tarea-card">
+              <div style="display:flex; align-items:flex-start; justify-content:space-between;">
+                <div class="tarea-titulo">{{ tarea.titulo }}</div>
+                <button type="button" class="btn-mover btn-editar-tarea" title="Editar tarea" style="font-size:12px;"
+                  data-id="{{ tarea.id }}"
+                  data-titulo="{{ tarea.titulo }}"
+                  data-descripcion="{{ tarea.descripcion|default:'' }}"
+                  data-estado="{{ tarea.estado }}"
+                  data-asignado="{{ tarea.asignado_a.id|default:'' }}"
+                  data-url-editar="{% url 'tarea_scrum_editar' tarea.id %}"
+                  data-url-borrar="{% url 'tarea_scrum_borrar' tarea.id %}">
+                  ✏️
+                </button>
+              </div>
+              {% if tarea.descripcion %}
+                <div class="tarea-desc">{{ tarea.descripcion|truncatechars:80 }}</div>
+              {% endif %}
+              <div class="tarea-footer">
+                <form method="POST" action="{% url 'tarea_scrum_cambiar_estado' tarea.id %}" style="margin:0;">
+                  {% csrf_token %}
+                  <input type="hidden" name="estado" value="backlog">
+                  <button type="submit" class="btn-mover" title="Mover a Backlog">◀</button>
+                </form>
+                {% if tarea.asignado_a %}
+                  <span class="tarea-asignado">
+                    <span class="tarea-asignado-dot"></span>
+                    {{ tarea.asignado_a.first_name|default:tarea.asignado_a.username }}
+                  </span>
+                {% endif %}
+                <form method="POST" action="{% url 'tarea_scrum_cambiar_estado' tarea.id %}" style="margin:0;">
+                  {% csrf_token %}
+                  <input type="hidden" name="estado" value="en_proceso">
+                  <button type="submit" class="btn-mover" title="Mover a En Proceso">▶</button>
+                </form>
+              </div>
+            </div>
+          {% empty %}
+            <p class="scrum-empty">Sin tareas</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- COLUMNA: EN PROCESO -->
+      <div class="scrum-col col-en_proceso">
+        <div class="scrum-col-header">
+          <span class="scrum-dot"></span>
+          <span class="scrum-col-title">En Proceso</span>
+          <span class="scrum-count">{{ tareas_por_estado.en_proceso|length }}</span>
+        </div>
+        <div class="scrum-drop-zone">
+          {% for tarea in tareas_por_estado.en_proceso %}
+            <div class="tarea-card">
+              <div style="display:flex; align-items:flex-start; justify-content:space-between;">
+                <div class="tarea-titulo">{{ tarea.titulo }}</div>
+                <button type="button" class="btn-mover btn-editar-tarea" title="Editar tarea" style="font-size:12px;"
+                  data-id="{{ tarea.id }}"
+                  data-titulo="{{ tarea.titulo }}"
+                  data-descripcion="{{ tarea.descripcion|default:'' }}"
+                  data-estado="{{ tarea.estado }}"
+                  data-asignado="{{ tarea.asignado_a.id|default:'' }}"
+                  data-url-editar="{% url 'tarea_scrum_editar' tarea.id %}"
+                  data-url-borrar="{% url 'tarea_scrum_borrar' tarea.id %}">
+                  ✏️
+                </button>
+              </div>
+              {% if tarea.descripcion %}
+                <div class="tarea-desc">{{ tarea.descripcion|truncatechars:80 }}</div>
+              {% endif %}
+              <div class="tarea-footer">
+                <form method="POST" action="{% url 'tarea_scrum_cambiar_estado' tarea.id %}" style="margin:0;">
+                  {% csrf_token %}
+                  <input type="hidden" name="estado" value="asignado">
+                  <button type="submit" class="btn-mover" title="Mover a Asignado">◀</button>
+                </form>
+                {% if tarea.asignado_a %}
+                  <span class="tarea-asignado">
+                    <span class="tarea-asignado-dot"></span>
+                    {{ tarea.asignado_a.first_name|default:tarea.asignado_a.username }}
+                  </span>
+                {% endif %}
+                <form method="POST" action="{% url 'tarea_scrum_cambiar_estado' tarea.id %}" style="margin:0;">
+                  {% csrf_token %}
+                  <input type="hidden" name="estado" value="verificacion">
+                  <button type="submit" class="btn-mover" title="Mover a Verificación">▶</button>
+                </form>
+              </div>
+            </div>
+          {% empty %}
+            <p class="scrum-empty">Sin tareas</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- COLUMNA: VERIFICACIÓN -->
+      <div class="scrum-col col-verificacion">
+        <div class="scrum-col-header">
+          <span class="scrum-dot"></span>
+          <span class="scrum-col-title">Verificación</span>
+          <span class="scrum-count">{{ tareas_por_estado.verificacion|length }}</span>
+        </div>
+        <div class="scrum-drop-zone">
+          {% for tarea in tareas_por_estado.verificacion %}
+            <div class="tarea-card">
+              <div style="display:flex; align-items:flex-start; justify-content:space-between;">
+                <div class="tarea-titulo">{{ tarea.titulo }}</div>
+                <button type="button" class="btn-mover btn-editar-tarea" title="Editar tarea" style="font-size:12px;"
+                  data-id="{{ tarea.id }}"
+                  data-titulo="{{ tarea.titulo }}"
+                  data-descripcion="{{ tarea.descripcion|default:'' }}"
+                  data-estado="{{ tarea.estado }}"
+                  data-asignado="{{ tarea.asignado_a.id|default:'' }}"
+                  data-url-editar="{% url 'tarea_scrum_editar' tarea.id %}"
+                  data-url-borrar="{% url 'tarea_scrum_borrar' tarea.id %}">
+                  ✏️
+                </button>
+              </div>
+              {% if tarea.descripcion %}
+                <div class="tarea-desc">{{ tarea.descripcion|truncatechars:80 }}</div>
+              {% endif %}
+              <div class="tarea-footer">
+                <form method="POST" action="{% url 'tarea_scrum_cambiar_estado' tarea.id %}" style="margin:0;">
+                  {% csrf_token %}
+                  <input type="hidden" name="estado" value="en_proceso">
+                  <button type="submit" class="btn-mover" title="Mover a En Proceso">◀</button>
+                </form>
+                {% if tarea.asignado_a %}
+                  <span class="tarea-asignado">
+                    <span class="tarea-asignado-dot"></span>
+                    {{ tarea.asignado_a.first_name|default:tarea.asignado_a.username }}
+                  </span>
+                {% endif %}
+                <form method="POST" action="{% url 'tarea_scrum_cambiar_estado' tarea.id %}" style="margin:0;">
+                  {% csrf_token %}
+                  <input type="hidden" name="estado" value="completado">
+                  <button type="submit" class="btn-mover" title="Mover a Completado">▶</button>
+                </form>
+              </div>
+            </div>
+          {% empty %}
+            <p class="scrum-empty">Sin tareas</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- COLUMNA: COMPLETADO -->
+      <div class="scrum-col col-completado">
+        <div class="scrum-col-header">
+          <span class="scrum-dot"></span>
+          <span class="scrum-col-title">Completado</span>
+          <span class="scrum-count">{{ tareas_por_estado.completado|length }}</span>
+        </div>
+        <div class="scrum-drop-zone">
+          {% for tarea in tareas_por_estado.completado %}
+            <div class="tarea-card">
+              <div style="display:flex; align-items:flex-start; justify-content:space-between;">
+                <div class="tarea-titulo">{{ tarea.titulo }}</div>
+                <button type="button" class="btn-mover btn-editar-tarea" title="Editar tarea" style="font-size:12px;"
+                  data-id="{{ tarea.id }}"
+                  data-titulo="{{ tarea.titulo }}"
+                  data-descripcion="{{ tarea.descripcion|default:'' }}"
+                  data-estado="{{ tarea.estado }}"
+                  data-asignado="{{ tarea.asignado_a.id|default:'' }}"
+                  data-url-editar="{% url 'tarea_scrum_editar' tarea.id %}"
+                  data-url-borrar="{% url 'tarea_scrum_borrar' tarea.id %}">
+                  ✏️
+                </button>
+              </div>
+              {% if tarea.descripcion %}
+                <div class="tarea-desc">{{ tarea.descripcion|truncatechars:80 }}</div>
+              {% endif %}
+              <div class="tarea-footer">
+                <form method="POST" action="{% url 'tarea_scrum_cambiar_estado' tarea.id %}" style="margin:0;">
+                  {% csrf_token %}
+                  <input type="hidden" name="estado" value="verificacion">
+                  <button type="submit" class="btn-mover" title="Mover a Verificación">◀</button>
+                </form>
+                {% if tarea.asignado_a %}
+                  <span class="tarea-asignado">
+                    <span class="tarea-asignado-dot"></span>
+                    {{ tarea.asignado_a.first_name|default:tarea.asignado_a.username }}
+                  </span>
+                {% endif %}
+                <span></span>
+              </div>
+            </div>
+          {% empty %}
+            <p class="scrum-empty">Sin tareas</p>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div><!-- /scrum-board -->
+  </div><!-- /scrum-section -->
+
+</div><!-- /detalle-wrap -->
+
+<!-- ================= MODAL: NUEVA TAREA SCRUM ================= -->
+{% if form_tarea %}
+<div id="modalTarea" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:999; justify-content:center; align-items:center;">
+  <div style="background:#fff; border-radius:18px; padding:28px 32px; width:100%; max-width:480px; box-shadow:0 20px 60px rgba(0,0,0,0.2); position:relative;">
+
+    <button type="button" onclick="document.getElementById('modalTarea').style.display='none'"
+      style="position:absolute; top:14px; right:18px; background:none; border:none; font-size:22px; cursor:pointer; color:#94a3b8;">
+      ✕
+    </button>
+
+    <h2 style="margin:0 0 18px 0; font-size:20px;">Nueva tarea</h2>
+
+    <form method="POST" action="{% url 'tarea_scrum_crear' proyecto.id %}">
+      {% csrf_token %}
+
+      <div style="margin-bottom:14px;">
+        <label style="display:block; font-weight:600; font-size:13px; margin-bottom:5px;">Título *</label>
+        {{ form_tarea.titulo }}
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label style="display:block; font-weight:600; font-size:13px; margin-bottom:5px;">Descripción</label>
+        {{ form_tarea.descripcion }}
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label style="display:block; font-weight:600; font-size:13px; margin-bottom:5px;">Estado</label>
+        {{ form_tarea.estado }}
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <label style="display:block; font-weight:600; font-size:13px; margin-bottom:5px;">Asignar a</label>
+        {{ form_tarea.asignado_a }}
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:10px;">
+        <button type="button" onclick="document.getElementById('modalTarea').style.display='none'"
+          style="padding:10px 20px; border-radius:10px; border:1px solid #e2e8f0; background:#fff; font-weight:600; cursor:pointer; font-size:14px;">
+          Cancelar
+        </button>
+        <button type="submit" style="padding:10px 20px; border-radius:10px; background:#14b8d4; color:white; border:none; font-weight:600; cursor:pointer; font-size:14px;">
+          Crear tarea
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<style>
+  #modalTarea input[type="text"],
+  #modalTarea textarea,
+  #modalTarea select,
+  #modalEditarTarea input[type="text"],
+  #modalEditarTarea textarea,
+  #modalEditarTarea select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1.5px solid #e2e8f0;
+    font-size: 14px;
+    background: #f8fafc;
+    transition: border-color 0.2s;
+  }
+  #modalTarea input[type="text"]:focus,
+  #modalTarea textarea:focus,
+  #modalTarea select:focus,
+  #modalEditarTarea input[type="text"]:focus,
+  #modalEditarTarea textarea:focus,
+  #modalEditarTarea select:focus {
+    outline: none;
+    border-color: #14b8d4;
+  }
+</style>
+{% endif %}
+
+<!-- ================= MODAL: EDITAR TAREA SCRUM ================= -->
+<div id="modalEditarTarea" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:999; justify-content:center; align-items:center;">
+  <div style="background:#fff; border-radius:18px; padding:28px 32px; width:100%; max-width:480px; box-shadow:0 20px 60px rgba(0,0,0,0.2); position:relative;">
+
+    <button type="button" onclick="document.getElementById('modalEditarTarea').style.display='none'"
+      style="position:absolute; top:14px; right:18px; background:none; border:none; font-size:22px; cursor:pointer; color:#94a3b8;">
+      ✕
+    </button>
+
+    <h2 style="margin:0 0 18px 0; font-size:20px;">Editar tarea</h2>
+
+    <form id="formEditarTarea" method="POST" action="">
+      {% csrf_token %}
+
+      <div style="margin-bottom:14px;">
+        <label style="display:block; font-weight:600; font-size:13px; margin-bottom:5px;">Título *</label>
+        <input type="text" name="titulo" id="editTitulo" required placeholder="Nombre de la tarea">
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label style="display:block; font-weight:600; font-size:13px; margin-bottom:5px;">Descripción</label>
+        <textarea name="descripcion" id="editDescripcion" rows="3" placeholder="Descripción opcional..."></textarea>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label style="display:block; font-weight:600; font-size:13px; margin-bottom:5px;">Estado</label>
+        <select name="estado" id="editEstado">
+          <option value="backlog">Backlog</option>
+          <option value="asignado">Asignado</option>
+          <option value="en_proceso">En Proceso</option>
+          <option value="verificacion">Verificación</option>
+          <option value="completado">Completado</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <label style="display:block; font-weight:600; font-size:13px; margin-bottom:5px;">Asignar a</label>
+        <select name="asignado_a" id="editAsignado">
+          <option value="">— Sin asignar —</option>
+          {% for p in integrantes %}
+            <option value="{{ p.usuario.id }}">{{ p.usuario.first_name }} {{ p.usuario.last_name }} (@{{ p.usuario.username }})</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <button type="button" id="btnBorrarTarea"
+          style="padding:8px 16px; border-radius:10px; background:#ef4444; color:white; border:none; font-weight:600; cursor:pointer; font-size:13px;">
+          Borrar
+        </button>
+        <div style="display:flex; gap:10px;">
+          <button type="button" onclick="document.getElementById('modalEditarTarea').style.display='none'"
+            style="padding:10px 20px; border-radius:10px; border:1px solid #e2e8f0; background:#fff; font-weight:600; cursor:pointer; font-size:14px;">
+            Cancelar
+          </button>
+          <button type="submit" style="padding:10px 20px; border-radius:10px; background:#14b8d4; color:white; border:none; font-weight:600; cursor:pointer; font-size:14px;">
+            Guardar
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <form id="formBorrarTarea" method="POST" action="" style="display:none;">
+      {% csrf_token %}
+    </form>
+
+  </div>
 </div>
 
 <script>
-  /* Muestra/oculta el formulario para editar el rol del usuario */
-  function toggleRolEdit(){
+  function toggleRolEdit() {
     const f = document.getElementById("formRol");
     f.style.display = (f.style.display === "none" || f.style.display === "") ? "flex" : "none";
   }
+
+  // Abrir modal de edición leyendo data-attributes del botón
+  document.querySelectorAll('.btn-editar-tarea').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.getElementById('editTitulo').value = this.dataset.titulo;
+      document.getElementById('editDescripcion').value = this.dataset.descripcion;
+      document.getElementById('editEstado').value = this.dataset.estado;
+      document.getElementById('editAsignado').value = this.dataset.asignado || '';
+      document.getElementById('formEditarTarea').action = this.dataset.urlEditar;
+      document.getElementById('formBorrarTarea').action = this.dataset.urlBorrar;
+      document.getElementById('modalEditarTarea').style.display = 'flex';
+    });
+  });
+
+  document.getElementById('btnBorrarTarea').addEventListener('click', function() {
+    if (confirm('¿Seguro que quieres borrar esta tarea?')) {
+      document.getElementById('formBorrarTarea').submit();
+    }
+  });
 </script>
 
 {% endblock %}

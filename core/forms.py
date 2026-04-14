@@ -20,7 +20,7 @@ from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
 from django.utils.html import strip_tags
 
-from .models import Practicante, ReporteAvance, Proyecto
+from .models import Practicante, ReporteAvance, Proyecto, TareaScrum
 
 """
 REFACTOR/SEGURIDAD (2026-03-17):
@@ -525,3 +525,63 @@ class SugerenciaForm(forms.Form):
         if len(v) < 3:
             raise forms.ValidationError("La sugerencia es demasiado corta.")
         return v
+
+
+# =========================================================
+# FORMULARIO: TAREA SCRUM
+# =========================================================
+class TareaScrumForm(forms.ModelForm):
+    """
+    Formulario para crear o editar una tarea del tablero Scrum.
+
+    Campos:
+    - titulo: nombre breve de la tarea (obligatorio)
+    - descripcion: detalle opcional
+    - estado: en qué columna del tablero aparece
+    - asignado_a: a qué integrante del proyecto se asigna (opcional)
+
+    Nota: el campo 'asignado_a' se filtra en la vista para mostrar
+    solo los usuarios que participan en el proyecto.
+    """
+
+    class Meta:
+        model = TareaScrum
+        fields = ["titulo", "descripcion", "estado", "asignado_a"]
+        widgets = {
+            "descripcion": forms.Textarea(attrs={"rows": 3, "placeholder": "Descripción opcional..."}),
+            "titulo": forms.TextInput(attrs={"placeholder": "Nombre de la tarea"}),
+        }
+
+    def __init__(self, *args, proyecto=None, **kwargs):
+        """
+        Recibo el proyecto para filtrar el queryset de 'asignado_a'
+        y mostrar solo usuarios que participan en ese proyecto.
+        """
+        super().__init__(*args, **kwargs)
+
+        # Hago 'asignado_a' opcional en el form
+        self.fields["asignado_a"].required = False
+        self.fields["asignado_a"].label = "Asignar a"
+        self.fields["asignado_a"].empty_label = "— Sin asignar —"
+
+        # Filtro los usuarios al proyecto si se pasa
+        if proyecto:
+            from django.contrib.auth.models import User
+            from .models import ParticipacionProyecto
+
+            user_ids = (
+                ParticipacionProyecto.objects
+                .filter(proyecto=proyecto)
+                .values_list("usuario_id", flat=True)
+            )
+            self.fields["asignado_a"].queryset = User.objects.filter(id__in=user_ids)
+        else:
+            self.fields["asignado_a"].queryset = User.objects.none()
+
+    def clean_titulo(self):
+        v = _sanitize_text(self.cleaned_data.get("titulo"), max_len=200, allow_newlines=False)
+        _validate_not_empty(v, "Debo indicar el título de la tarea.")
+        return v
+
+    def clean_descripcion(self):
+        return _sanitize_text(self.cleaned_data.get("descripcion"), max_len=2000, allow_newlines=True)

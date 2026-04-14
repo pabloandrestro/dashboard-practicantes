@@ -27,6 +27,10 @@ from core.views import (
     proyecto_unirme, proyecto_salir, cambiar_mi_rol,
     reporte_crear, reporte_borrar,
     descargar_horas_csv,
+    tarea_scrum_crear,
+    tarea_scrum_cambiar_estado,
+    tarea_scrum_editar,
+    tarea_scrum_borrar,
 
     # Panel de administración interno (mi panel, no el admin de Django)
     admin_practicantes, admin_practicante_crear, admin_practicante_editar,
@@ -88,6 +92,14 @@ urlpatterns = [
     # =========================
     path("proyectos/<int:proyecto_id>/reporte/nuevo/", reporte_crear, name="reporte_crear"),
     path("reportes/<int:reporte_id>/borrar/", reporte_borrar, name="reporte_borrar"),
+
+    # =========================
+    # TAREAS SCRUM
+    # =========================
+    path("proyectos/<int:proyecto_id>/tarea-scrum/crear/", tarea_scrum_crear, name="tarea_scrum_crear"),
+    path("tarea-scrum/<int:tarea_id>/estado/", tarea_scrum_cambiar_estado, name="tarea_scrum_cambiar_estado"),
+    path("tarea-scrum/<int:tarea_id>/editar/", tarea_scrum_editar, name="tarea_scrum_editar"),
+    path("tarea-scrum/<int:tarea_id>/borrar/", tarea_scrum_borrar, name="tarea_scrum_borrar"),
 
     # =========================
     # HORAS

@@ -43,6 +43,7 @@ from .models import (
     RegistroJornada,
     PerfilAdmin,
     Sugerencia,
+    TareaScrum,
 )
 
 # Importo formularios que uso en las vistas
@@ -54,6 +55,7 @@ from .forms import (
     AdminCrearPracticanteUserForm,
     AdminEditarUsuarioForm,
     SugerenciaForm,
+    TareaScrumForm,
 )
 
 User = get_user_model()
@@ -400,12 +402,34 @@ def proyecto_detalle(request, proyecto_id):
         pract = Practicante.objects.filter(user=part.usuario).only("foto_perfil").first()
         part.foto_perfil = pract.foto_perfil if pract and pract.foto_perfil else None
 
+    # Tareas Scrum del proyecto, agrupadas por estado
+    tareas_qs = (
+        TareaScrum.objects
+        .filter(proyecto=proyecto)
+        .select_related("asignado_a", "creado_por")
+        .order_by("fecha_creacion")
+    )
+
+    # Diccionario con tareas por columna (facilita el template)
+    tareas_por_estado = {
+        "backlog":      [t for t in tareas_qs if t.estado == "backlog"],
+        "asignado":     [t for t in tareas_qs if t.estado == "asignado"],
+        "en_proceso":   [t for t in tareas_qs if t.estado == "en_proceso"],
+        "verificacion": [t for t in tareas_qs if t.estado == "verificacion"],
+        "completado":   [t for t in tareas_qs if t.estado == "completado"],
+    }
+
+    # Formulario para crear tarea (solo si puede editar)
+    form_tarea = TareaScrumForm(proyecto=proyecto) if can_edit else None
+
     return render(request, "proyecto_detalle.html", {
         "proyecto": proyecto,
         "participacion": participacion,
         "can_edit": can_edit,
         "reportes": reportes,
-        "integrantes": integrantes
+        "integrantes": integrantes,
+        "tareas_por_estado": tareas_por_estado,
+        "form_tarea": form_tarea,
     })
 
 
@@ -595,6 +619,137 @@ def reporte_borrar(request, reporte_id):
         return redirect("proyecto_detalle", proyecto_id=proyecto.id)
 
     return redirect("proyecto_detalle", proyecto_id=reporte.proyecto.id)
+
+
+# =========================================================
+# TAREAS SCRUM
+# =========================================================
+
+@login_required
+@require_POST
+def tarea_scrum_crear(request, proyecto_id):
+    """
+    Creo una tarea Scrum para un proyecto.
+
+    Reglas:
+    - El usuario debe participar en el proyecto (o ser staff).
+    - El formulario filtra 'asignado_a' para mostrar solo integrantes.
+    - La tarea se guarda con 'creado_por' = usuario actual.
+    - Redirijo a la página desde donde vino (admin o practicante).
+    """
+    proyecto = get_object_or_404(Proyecto, id=proyecto_id)
+
+    # Verifico permisos: participante o staff
+    es_participante = ParticipacionProyecto.objects.filter(
+        usuario=request.user, proyecto=proyecto
+    ).exists()
+
+    if not es_participante and not request.user.is_staff:
+        return redirect("proyectos")
+
+    form = TareaScrumForm(request.POST, proyecto=proyecto)
+
+    if form.is_valid():
+        tarea = form.save(commit=False)
+        tarea.proyecto = proyecto
+        tarea.creado_por = request.user
+        tarea.save()
+
+    # Determino a dónde redirigir según de dónde vino
+    referer = request.META.get("HTTP_REFERER", "")
+    if "/panel/" in referer:
+        return redirect("admin_proyecto_detalle", proyecto_id=proyecto.id)
+    return redirect("proyecto_detalle", proyecto_id=proyecto.id)
+
+
+@login_required
+@require_POST
+def tarea_scrum_cambiar_estado(request, tarea_id):
+    """
+    Cambio el estado de una tarea Scrum.
+
+    Recibo por POST el nuevo estado y lo valido contra los estados permitidos.
+    Solo pueden cambiar estado: participantes del proyecto o staff.
+    """
+    tarea = get_object_or_404(TareaScrum, id=tarea_id)
+    proyecto = tarea.proyecto
+
+    # Verifico permisos
+    es_participante = ParticipacionProyecto.objects.filter(
+        usuario=request.user, proyecto=proyecto
+    ).exists()
+
+    if not es_participante and not request.user.is_staff:
+        return redirect("proyectos")
+
+    nuevo_estado = request.POST.get("estado", "").strip()
+    estados_validos = [choice[0] for choice in TareaScrum.ESTADO_CHOICES]
+
+    if nuevo_estado in estados_validos:
+        tarea.estado = nuevo_estado
+        tarea.save(update_fields=["estado"])
+
+    # Redirijo según de dónde vino
+    referer = request.META.get("HTTP_REFERER", "")
+    if "/panel/" in referer:
+        return redirect("admin_proyecto_detalle", proyecto_id=proyecto.id)
+    return redirect("proyecto_detalle", proyecto_id=proyecto.id)
+
+
+@login_required
+@require_POST
+def tarea_scrum_editar(request, tarea_id):
+    """
+    Edito una tarea Scrum existente.
+
+    Recibo por POST los campos actualizados y los valido con TareaScrumForm.
+    Solo pueden editar: participantes del proyecto o staff.
+    """
+    tarea = get_object_or_404(TareaScrum, id=tarea_id)
+    proyecto = tarea.proyecto
+
+    es_participante = ParticipacionProyecto.objects.filter(
+        usuario=request.user, proyecto=proyecto
+    ).exists()
+
+    if not es_participante and not request.user.is_staff:
+        return redirect("proyectos")
+
+    form = TareaScrumForm(request.POST, instance=tarea, proyecto=proyecto)
+
+    if form.is_valid():
+        form.save()
+
+    referer = request.META.get("HTTP_REFERER", "")
+    if "/panel/" in referer:
+        return redirect("admin_proyecto_detalle", proyecto_id=proyecto.id)
+    return redirect("proyecto_detalle", proyecto_id=proyecto.id)
+
+
+@login_required
+@require_POST
+def tarea_scrum_borrar(request, tarea_id):
+    """
+    Elimino una tarea Scrum.
+
+    Solo pueden borrar: participantes del proyecto o staff.
+    """
+    tarea = get_object_or_404(TareaScrum, id=tarea_id)
+    proyecto = tarea.proyecto
+
+    es_participante = ParticipacionProyecto.objects.filter(
+        usuario=request.user, proyecto=proyecto
+    ).exists()
+
+    if not es_participante and not request.user.is_staff:
+        return redirect("proyectos")
+
+    tarea.delete()
+
+    referer = request.META.get("HTTP_REFERER", "")
+    if "/panel/" in referer:
+        return redirect("admin_proyecto_detalle", proyecto_id=proyecto.id)
+    return redirect("proyecto_detalle", proyecto_id=proyecto.id)
 
 
 # =========================================================
@@ -890,11 +1045,32 @@ def admin_proyecto_detalle(request, proyecto_id):
         pract = Practicante.objects.filter(user=part.usuario).only("foto_perfil").first()
         part.foto_perfil = pract.foto_perfil if pract and pract.foto_perfil else None
 
+    # Tareas Scrum del proyecto, agrupadas por estado
+    tareas_qs = (
+        TareaScrum.objects
+        .filter(proyecto=proyecto)
+        .select_related("asignado_a", "creado_por")
+        .order_by("fecha_creacion")
+    )
+
+    tareas_por_estado = {
+        "backlog":      [t for t in tareas_qs if t.estado == "backlog"],
+        "asignado":     [t for t in tareas_qs if t.estado == "asignado"],
+        "en_proceso":   [t for t in tareas_qs if t.estado == "en_proceso"],
+        "verificacion": [t for t in tareas_qs if t.estado == "verificacion"],
+        "completado":   [t for t in tareas_qs if t.estado == "completado"],
+    }
+
+    # Formulario para crear tarea (admin siempre puede)
+    form_tarea = TareaScrumForm(proyecto=proyecto)
+
     return render(request, "admin_proyecto_detalle.html", {
         "proyecto": proyecto,
         "reportes": reportes,
         "integrantes": integrantes,
         "can_edit": False,
+        "tareas_por_estado": tareas_por_estado,
+        "form_tarea": form_tarea,
     })
 
 
