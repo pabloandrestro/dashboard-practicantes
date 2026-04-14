@@ -208,6 +208,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #==========================
 
 # Configuración de Supabase Storage (S3 Compatible)
+INSTALLED_APPS += ['storages'] # Asegúrate de que 'storages' esté en tu lista
+
 AWS_ACCESS_KEY_ID = 'mljqhmrwhnotmevvvclb'  # El ID de tu proyecto (está en la URL de Supabase)
 AWS_SECRET_ACCESS_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1sanFobXJ3aG5vdG1ldnZ2Y2xiIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3Mzc1MjI1NiwiZXhwIjoyMDg5MzI4MjU2fQ.aynbEDM1toj0pMmwQICX6C9hfWIWW4Tj3Hai18LsU8M'  # La encuentras en Settings > API (no uses la anon key)
 AWS_STORAGE_BUCKET_NAME = 'multimedia'  # El nombre exacto del bucket que creaste
