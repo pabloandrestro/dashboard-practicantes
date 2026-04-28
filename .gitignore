@@ -10,7 +10,7 @@ venv/
 env/
 .venv/
 node_modules/
-dist/
+
 
 
 # ****Se sube la BD temporalmente para el desarrollo****
