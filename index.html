@@ -1,13 +1,186 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>viteoptimization</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>HubLab</title>
+  <style src="./src/style.css"></style>
+  <!-- Fuente principal del sistema -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <div class="navbar">
+
+    <!-- ================= LOGO ================= -->
+    <div class="brand">
+      <img src="{% static 'images/logo.png' %}" alt="HubLab">
+    </div>
+
+    <!-- Solo muestro navegación si el usuario está autenticado -->
+    {% if request.user.is_authenticated %}
+    <div class="nav-center">
+      <div class="nav-links">
+
+        <!-- ================= ADMIN SUPERUSER ================= -->
+        {% if request.user.is_superuser %}
+
+          <!-- Menú practicantes -->
+          <a href="{% url 'admin_practicantes' %}"
+             class="{% if request.resolver_match.url_name == 'admin_practicantes' or request.resolver_match.url_name == 'admin_practicante_crear' or request.resolver_match.url_name == 'admin_practicante_editar' or request.resolver_match.url_name == 'admin_practicante_perfil' %}active{% endif %}">
+            Practicantes
+          </a>
+
+          <!-- Menú proyectos -->
+          <a href="{% url 'admin_proyectos' %}"
+             class="{% if request.resolver_match.url_name == 'admin_proyectos' or request.resolver_match.url_name == 'admin_proyecto_detalle' %}active{% endif %}">
+            Proyectos
+          </a>
+
+          <!-- Menú horas -->
+          <a href="{% url 'admin_horas' %}"
+             class="{% if request.resolver_match.url_name == 'admin_horas' %}active{% endif %}">
+            Horas
+          </a>
+
+          <!-- Menú reportes -->
+          <a href="{% url 'admin_reportes' %}"
+             class="{% if request.resolver_match.url_name == 'admin_reportes' %}active{% endif %}">
+            Reporte
+          </a>
+
+          <!-- Menú sugerencias -->
+          <a href="{% url 'sugerencias' %}"
+             class="{% if request.resolver_match.url_name == 'sugerencias' %}active{% endif %}">
+            Sugerencias
+          </a>
+
+          <!-- Perfil admin -->
+          <a href="{% url 'admin_perfil' %}"
+             class="{% if request.resolver_match.url_name == 'admin_perfil' or request.resolver_match.url_name == 'admin_perfil_editar' %}active{% endif %}">
+            Mi Perfil
+          </a>
+
+        <!-- ================= CONTROLLER EN MODO ADMIN ================= -->
+        {% elif request.user.is_staff and es_admin_path %}
+
+          <!-- Botón para volver a vista practicante -->
+          <a href="/" class="nav-switch">Ir a practicante</a>
+
+          <a href="{% url 'admin_practicantes' %}"
+             class="{% if request.resolver_match.url_name == 'admin_practicantes' or request.resolver_match.url_name == 'admin_practicante_crear' or request.resolver_match.url_name == 'admin_practicante_editar' or request.resolver_match.url_name == 'admin_practicante_perfil' %}active{% endif %}">
+            Practicantes
+          </a>
+
+          <a href="{% url 'admin_proyectos' %}"
+             class="{% if request.resolver_match.url_name == 'admin_proyectos' or request.resolver_match.url_name == 'admin_proyecto_detalle' %}active{% endif %}">
+            Proyectos
+          </a>
+
+          <a href="{% url 'admin_horas' %}"
+             class="{% if request.resolver_match.url_name == 'admin_horas' %}active{% endif %}">
+            Horas
+          </a>
+
+          <a href="{% url 'admin_reportes' %}"
+             class="{% if request.resolver_match.url_name == 'admin_reportes' %}active{% endif %}">
+            Reporte
+          </a>
+
+          <a href="{% url 'admin_perfil' %}"
+             class="{% if request.resolver_match.url_name == 'admin_perfil' or request.resolver_match.url_name == 'admin_perfil_editar' %}active{% endif %}">
+            Mi Perfil
+          </a>
+
+        <!-- ================= PRACTICANTE ================= -->
+        {% else %}
+
+          <!-- Si el usuario es controller, puede cambiar a admin -->
+          {% if request.user.is_staff %}
+            <a href="{% url 'admin_practicantes' %}" class="nav-switch">
+              Ir a admin
+            </a>
+          {% endif %}
+
+          <a href="{% url 'inicio' %}"
+             class="{% if request.resolver_match.url_name == 'inicio' %}active{% endif %}">
+            Inicio
+          </a>
+
+          <a href="{% url 'proyectos' %}"
+             class="{% if request.resolver_match.url_name == 'proyectos' %}active{% endif %}">
+            Mis proyectos
+          </a>
+
+          <a href="{% url 'horas' %}"
+             class="{% if request.resolver_match.url_name == 'horas' %}active{% endif %}">
+            Registro de horas
+          </a>
+
+          <a href="{% url 'sugerencias' %}"
+             class="{% if request.resolver_match.url_name == 'sugerencias' %}active{% endif %}">
+            Sugerencias
+          </a>
+
+          <a href="{% url 'perfil' %}"
+             class="{% if request.resolver_match.url_name == 'perfil' %}active{% endif %}">
+            Mi perfil
+          </a>
+
+        {% endif %}
+
+      </div>
+    </div>
+
+    <!-- ================= FOTO DE PERFIL ================= -->
+    <div class="profile">
+      {% if navbar_avatar_url %}
+        <img src="{{ navbar_avatar_url }}" alt="avatar">
+      {% else %}
+        <img src="{% static 'images/default-avatar.png' %}" alt="avatar">
+      {% endif %}
+    </div>
+    {% endif %}
+
+  </div>
+
+  {% if user.is_authenticated and user.is_staff %}
+    {% if nuevas_sugerencias_count > 0 %}
+        <div class="alert alert-info shadow-sm mb-4" role="alert" style="border-left: 5px solid #0d6efd;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>¡Atención Admin!</strong> Tienes <strong>{{ nuevas_sugerencias_count }}</strong> sugerencia(s) nueva(s) ('enviada') pendiente(s) de revisión.
+                </div>
+                <a href="{% url 'sugerencias' %}" class="btn btn-sm btn-primary">
+                    Ver sugerencias
+                </a>
+            </div>
+        </div>
+    {% endif %}
+{% endif %}
+
+  <!-- ================= MENSAJES GLOBALES (ALERTAS) ================= -->
+  {% if messages %}
+  <div class="alerts">
+    {% for message in messages %}
+      {% if message.tags == "success" %}
+        <div class="alert alert-success">{{ message }}</div>
+      {% elif message.tags == "error" %}
+        <div class="alert alert-error">{{ message }}</div>
+      {% else %}
+        <div class="alert">{{ message }}</div>
+      {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- ================= CONTENIDO DE LAS VISTAS ================= -->
+  <div class="content">
+    {% block content %}{% endblock %}
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+
+</body>
 </html>
